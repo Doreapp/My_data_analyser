@@ -16,16 +16,28 @@ class ZipFileOpener {
         var zipEntry: ZipEntry?
 
         while (zipInputStream.nextEntry.also { zipEntry = it } != null) {
-            val filename = zipEntry?.name
+            zipEntry?.let {
+                val filename = it.name
 
-            // Need to create directories if not exists, or
-            // it will generate an Exception...
-            if (zipEntry?.isDirectory == true) {
-                Debug.i(TAG, "Directory in zip : $filename")
-            } else {
-                Debug.i(TAG, "File in zip : $filename")
+                if (it.isDirectory) {
+                    Debug.i(TAG, "Directory in zip : $filename")
+                } else {
+                    Debug.i(TAG, "File in zip : $filename")
+                }
             }
             zipInputStream.closeEntry()
         }
+    }
+
+    private fun readFile(fileName: String, entry: ZipEntry) {
+        when {
+            fileName.startsWith("message_") -> {
+                readMessagesFile(entry)
+            }
+        }
+    }
+
+    private fun readMessagesFile(entry: ZipEntry) {
+        //TODO
     }
 }

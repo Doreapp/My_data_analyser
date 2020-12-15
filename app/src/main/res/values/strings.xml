@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">My data analyser</string>
+
+    <!-- classics -->
+    <string name="dismiss">Dismiss</string>
+
+    <!-- alert Dialog -->
+    <string name="refuse">Refuse</string>
+    <string name="grant">Grant</string>
+    <string name="title_need_file_permission">File Access Permission</string>
+    <string name="need_file_permission">We need your permission for reading your files</string>
+</resources>

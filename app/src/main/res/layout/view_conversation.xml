@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title"
+            android:textSize="@dimen/large"
+            android:textColor="@color/colorPrimary"/>
+
+    <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TableRow android:padding="@dimen/spaceNormal">
+            <TextView android:text="Message count"/>
+            <TextView android:id="@+id/messageCount"
+                      android:textColor="@color/colorPrimary"/>
+        </TableRow>
+        <TableRow android:padding="@dimen/spaceNormal">
+            <TextView android:layout_width="wrap_content"
+                      android:text="First Message"/>
+            <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/firstMessage"
+                    android:text="erfgtyhdfjnfherbgherfbgfhrfbhdhfsbrhkfbdkhfrebfherzjbffbhrebfj"
+                    android:textColor="@color/colorPrimary"/>
+        </TableRow>
+        <TableRow android:padding="@dimen/spaceNormal">
+
+            <TextView android:layout_width="wrap_content"
+                      android:text="First Message date"/>
+            <TextView
+                    android:layout_weight="1" android:id="@+id/firstMessageDate"
+
+                    android:textColor="@color/colorPrimary"/>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

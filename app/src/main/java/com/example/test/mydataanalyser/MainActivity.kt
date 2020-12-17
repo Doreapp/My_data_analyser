@@ -10,7 +10,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
+import com.example.test.mydataanalyser.facebook.ExploreFacebookTask
 import com.example.test.mydataanalyser.facebook.FacebookData
+import com.example.test.mydataanalyser.tools.TaskRunner
 import com.example.test.mydataanalyser.utils.Constants
 import com.example.test.mydataanalyser.utils.Debug
 import kotlinx.android.synthetic.main.activity_main.*
@@ -155,9 +157,13 @@ class MainActivity : AppCompatActivity() {
         Debug.i(TAG, "onFacebookFolderPicked uri=$uri")
 
         val docFile = DocumentFile.fromTreeUri(this, uri)
-        docFile?.let {
-            val fbData = FacebookData(docFile)
-            showFacebookData(fbData)
+        docFile?.let { doc ->
+            TaskRunner().executeAsync(ExploreFacebookTask(doc, contentResolver),
+                object : TaskRunner.Callback<FacebookData?> {
+                    override fun onComplete(result: FacebookData?) {
+                        result?.let { res -> showFacebookData(res) }
+                    }
+                })
         }
     }
 
@@ -165,5 +171,31 @@ class MainActivity : AppCompatActivity() {
         Debug.i(TAG, "show facebook data : $facebookData")
 
         Debug.i(TAG, "messages data : ${facebookData.messagesData.counts()}")
+        Debug.i(TAG, "total message count : ${facebookData.messagesData.totalMessageCount}")
+
+        facebookData.messagesData.conversations.sortWith { c1, c2 ->
+            c2.totalMessageCount.compareTo(c1.totalMessageCount)
+        }
+
+        for (i in 1..10) {
+            val conv = facebookData.messagesData.conversations[i - 1]
+            Debug.i(
+                TAG, "TOP $i conv : ${conv.title} " +
+                        "\nwith ${conv.totalMessageCount} msg and " +
+                        "\nstarting in ${conv.firstMessageDate} with " +
+                        conv.messageCount.toList().toTypedArray().contentToString().replace("(Per", "\n(Per")
+            )
+        }
+
+        facebookData.messagesData.conversations.sortWith { c1, c2 ->
+            c1.firstMessageDate!!.compareTo(c2.firstMessageDate)
+        }
+
+        for (i in 1..10) {
+            val conv = facebookData.messagesData.conversations[i - 1]
+            Debug.i(TAG, "TOP $i conv : ${conv.title} \nstarting in ${conv.firstMessageDate}")
+        }
+
+
     }
 }

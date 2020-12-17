@@ -157,8 +157,13 @@ class MainActivity : AppCompatActivity() {
         val docFile = DocumentFile.fromTreeUri(this, uri)
         docFile?.let {
             val fbData = FacebookData(docFile)
-            fbData.test()
-            Debug.i(TAG, "number of inbox conversations : ${fbData.inboxCount}")
+            showFacebookData(fbData)
         }
+    }
+
+    fun showFacebookData(facebookData: FacebookData) {
+        Debug.i(TAG, "show facebook data : $facebookData")
+
+        Debug.i(TAG, "messages data : ${facebookData.messagesData.counts()}")
     }
 }

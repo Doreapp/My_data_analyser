@@ -1,8 +1,12 @@
 package com.example.test.mydataanalyser.facebook.model
 
 data class Conversation(
-    var participants: List<Person>,
-    var messages: List<Message>,
+    var participants: HashSet<Person>,
+    var messages: ArrayList<Message>,
     var title: String?,
     var isStillParticipant: Boolean = false
-)
+) {
+    fun import(other: Conversation) {
+        messages.addAll(other.messages)
+    }
+}

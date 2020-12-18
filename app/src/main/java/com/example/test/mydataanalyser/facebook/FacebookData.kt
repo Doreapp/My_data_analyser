@@ -1,10 +1,12 @@
 package com.example.test.mydataanalyser.facebook
 
+import android.content.ContentResolver
 import androidx.documentfile.provider.DocumentFile
-import com.example.test.mydataanalyser.utils.Debug
 
-class FacebookData(val rootFolder: DocumentFile) {
+class FacebookData(rootFolder: DocumentFile, contentResolver: ContentResolver) {
     val TAG = "FacebookData"
+    private val messagesFolder = rootFolder.findFile(Paths.PATH_MESSAGES)
+    val messagesData = MessagesData(messagesFolder, contentResolver)
 
     object Paths {
         const val PATH_ABOUT_YOU = "about_you"
@@ -12,21 +14,15 @@ class FacebookData(val rootFolder: DocumentFile) {
         // TODO Add other paths (C:\Users\antoi\Downloads\tmp\facebook-AntoineMandin)
         const val PATH_MESSAGES = "messages"
 
-        const val PATH_MESSAGES_ARCHIVED_THREADS = "archived_threds"
-
-        // ...
+        const val PATH_MESSAGES_ARCHIVED_THREADS = "archived_threads"
+        const val PATH_MESSAGES_FILTERED_THREADS = "filtered_threads"
         const val PATH_MESSAGES_INBOX = "inbox"
+        const val PATH_MESSAGES_MESSAGE_REQUESTS = "message_requests"
+        const val PATH_MESSAGES_STICKERS_USED = "stickers_used"
+
+        const val PATH_MESSAGES_PHOTOS = "photos"
     }
 
-    fun test() {
-        Debug.i(TAG, "root exists ? ${rootFolder.exists()}")
-
-        val f2 = rootFolder.findFile(Paths.PATH_MESSAGES)?.findFile(Paths.PATH_MESSAGES_INBOX)
-        Debug.i(TAG, "file inbox $f2, exists ? ")
-    }
-
-    val inboxCount: Int?
-        get() = rootFolder.findFile(Paths.PATH_MESSAGES)?.findFile(Paths.PATH_MESSAGES_INBOX)?.listFiles()?.size
 
 
 }

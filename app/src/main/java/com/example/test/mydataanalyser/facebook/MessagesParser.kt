@@ -7,9 +7,10 @@ import com.example.test.mydataanalyser.facebook.model.Person
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 /**
  * Class used to parse a JSON file containing data about a facebook conversation
@@ -47,15 +48,9 @@ import kotlin.collections.HashMap
 class MessagesParser {
 
     /**
-     * `Map` of persons by their names.
-     * Only contains participants
-     */
-    private val personMap = HashMap<String, Person>()
-
-    /**
      * `List` of persons participating into the conversation
      */
-    private val participants = ArrayList<Person>()
+    private val participants = HashSet<Person>()
 
     /**
      * List of every sent messages
@@ -71,7 +66,7 @@ class MessagesParser {
      */
     @Throws(IOException::class)
     fun readJson(input: InputStream): Conversation {
-        val reader = JsonReader(InputStreamReader(input, "UTF-8"))
+        val reader = JsonReader(InputStreamReader(input, StandardCharsets.ISO_8859_1))
         return reader.use {
             readConversation(reader)
         }
@@ -121,10 +116,10 @@ class MessagesParser {
      * @see Person
      */
     @Throws(IOException::class)
-    fun readParticipantsArray(reader: JsonReader): List<Person> {
+    fun readParticipantsArray(reader: JsonReader): HashSet<Person> {
         reader.beginArray()
         while (reader.hasNext()) {
-            participants.add(readParticipant(reader))
+            readParticipant(reader)?.let { participants.add(it) }
         }
         reader.endArray()
 
@@ -139,7 +134,7 @@ class MessagesParser {
      * @see Person
      */
     @Throws(IOException::class)
-    fun readParticipant(reader: JsonReader): Person {
+    fun readParticipant(reader: JsonReader): Person? {
         var name: String? = null
 
         reader.beginObject()
@@ -154,10 +149,8 @@ class MessagesParser {
             }
         }
         reader.endObject()
-        val person = Person(name)
-        if (name != null)
-            personMap[name] = person
-        return person
+        name?.let { return Persons.getPerson(name) }
+        return null
     }
 
     /**
@@ -210,7 +203,7 @@ class MessagesParser {
         }
         reader.endObject()
 
-        val person = personMap[personName]
+        val person = personName?.let { Persons.getPerson(personName) }
 
         return Message(person, date, content)
     }

@@ -6,11 +6,20 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.test.mydataanalyser.facebook.ConversationData
+import com.example.test.mydataanalyser.facebook.ExploreFacebookTask
 import com.example.test.mydataanalyser.facebook.FacebookData
+import com.example.test.mydataanalyser.tools.TaskRunner
 import com.example.test.mydataanalyser.utils.Constants
 import com.example.test.mydataanalyser.utils.Debug
 import kotlinx.android.synthetic.main.activity_main.*
@@ -155,10 +164,57 @@ class MainActivity : AppCompatActivity() {
         Debug.i(TAG, "onFacebookFolderPicked uri=$uri")
 
         val docFile = DocumentFile.fromTreeUri(this, uri)
-        docFile?.let {
-            val fbData = FacebookData(docFile)
-            fbData.test()
-            Debug.i(TAG, "number of inbox conversations : ${fbData.inboxCount}")
+        docFile?.let { doc ->
+            TaskRunner().executeAsync(ExploreFacebookTask(doc, contentResolver),
+                object : TaskRunner.Callback<FacebookData?> {
+                    override fun onComplete(result: FacebookData?) {
+                        result?.let { res -> showFacebookData(res) }
+                    }
+                })
         }
+    }
+
+    fun showFacebookData(facebookData: FacebookData) {
+        Debug.i(TAG, "show facebook data : $facebookData")
+
+        Debug.i(TAG, "messages data : ${facebookData.messagesData.counts()}")
+        Debug.i(TAG, "total message count : ${facebookData.messagesData.totalMessageCount}")
+
+        facebookData.messagesData.conversations.sortWith { c1, c2 ->
+            c2.totalMessageCount.compareTo(c1.totalMessageCount)
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = Adapter(facebookData.messagesData.conversations)
+    }
+
+    inner class Adapter(private val conversations: List<ConversationData>) :
+        RecyclerView.Adapter<ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ViewHolder(
+                LayoutInflater.from(this@MainActivity)
+                    .inflate(R.layout.item_view_conversation, parent, false)
+            )
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val conv = conversations[position]
+            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv.title
+
+            holder.itemView.findViewById<TextView>(R.id.tvStats).text =
+                "${conv.totalMessageCount} messages \n" +
+                        "starting the ${conv.firstMessageDate}"
+
+        }
+
+        override fun getItemCount(): Int {
+            return conversations.size
+        }
+
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     }
 }

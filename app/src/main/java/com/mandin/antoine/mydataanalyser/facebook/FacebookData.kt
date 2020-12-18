@@ -2,11 +2,12 @@ package com.mandin.antoine.mydataanalyser.facebook
 
 import android.content.ContentResolver
 import androidx.documentfile.provider.DocumentFile
+import com.mandin.antoine.mydataanalyser.tools.TaskNotifier
 
-class FacebookData(rootFolder: DocumentFile, contentResolver: ContentResolver) {
+class FacebookData(rootFolder: DocumentFile, contentResolver: ContentResolver, notifier: TaskNotifier?) {
     val TAG = "FacebookData"
     private val messagesFolder = rootFolder.findFile(Paths.PATH_MESSAGES)
-    val messagesData = MessagesData(messagesFolder, contentResolver)
+    val messagesData = MessagesData(messagesFolder, contentResolver, notifier)
 
     object Paths {
         const val PATH_ABOUT_YOU = "about_you"
@@ -22,7 +23,4 @@ class FacebookData(rootFolder: DocumentFile, contentResolver: ContentResolver) {
 
         const val PATH_MESSAGES_PHOTOS = "photos"
     }
-
-
-
 }

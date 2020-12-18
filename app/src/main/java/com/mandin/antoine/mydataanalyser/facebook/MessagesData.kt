@@ -1,10 +1,15 @@
-package com.mandin.antoine.mydataanalyser.facebook;
+package com.mandin.antoine.mydataanalyser.facebook
 
 import android.content.ContentResolver
-import androidx.documentfile.provider.DocumentFile;
+import androidx.documentfile.provider.DocumentFile
+import com.mandin.antoine.mydataanalyser.tools.TaskNotifier
 import com.mandin.antoine.mydataanalyser.utils.Debug
 
-class MessagesData(messagesFolder: DocumentFile?, contentResolver: ContentResolver) {
+class MessagesData(
+    messagesFolder: DocumentFile?,
+    contentResolver: ContentResolver,
+    notifier: TaskNotifier?
+) {
     var archivedThreadFolder = messagesFolder?.findFile(FacebookData.Paths.PATH_MESSAGES_ARCHIVED_THREADS)
     var filteredThreadFolder = messagesFolder?.findFile(FacebookData.Paths.PATH_MESSAGES_FILTERED_THREADS)
     var inboxFolder = messagesFolder?.findFile(FacebookData.Paths.PATH_MESSAGES_INBOX)
@@ -28,11 +33,18 @@ class MessagesData(messagesFolder: DocumentFile?, contentResolver: ContentResolv
         get() = stickersUsedFolder?.listFiles()?.size
 
     init {
-        Debug.i("MessagesData", "<init>")
+
         val startTime = System.currentTimeMillis()
         inboxFolder?.listFiles()?.let { folders ->
-            for (folder in folders)
+            var count = 0
+            val length = folders.size
+            for (folder in folders) {
                 conversations.add(ConversationData(folder, contentResolver))
+
+                count++
+                notifier?.notify("Analysing Conversations [inbox]. $count/$length conversations done.")
+            }
+
         }
         Debug.i("MessagesData", "resolving message took : ${System.currentTimeMillis() - startTime}ms")
     }

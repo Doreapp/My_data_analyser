@@ -22,6 +22,7 @@ import com.mandin.antoine.mydataanalyser.facebook.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
+import com.mandin.antoine.mydataanalyser.views.LoadingDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Debug.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        setContentView(com.mandin.antoine.mydataanalyser.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
 
         when {
@@ -66,14 +67,14 @@ class MainActivity : AppCompatActivity() {
         Debug.i(TAG, "openReadFilePermissionDialog()")
         readFilePermissionDialog =
             AlertDialog.Builder(this)
-                .setMessage(com.mandin.antoine.mydataanalyser.R.string.need_file_permission)
-                .setTitle(com.mandin.antoine.mydataanalyser.R.string.title_need_file_permission)
+                .setMessage(R.string.need_file_permission)
+                .setTitle(R.string.title_need_file_permission)
                 .setCancelable(false)
-                .setNegativeButton(com.mandin.antoine.mydataanalyser.R.string.refuse) { dialog, _ ->
+                .setNegativeButton(R.string.refuse) { dialog, _ ->
                     dialog.cancel()
                     finish()
                 }
-                .setPositiveButton(com.mandin.antoine.mydataanalyser.R.string.grant) { _, _ ->
+                .setPositiveButton(R.string.grant) { _, _ ->
                     requestReadFilePermission()
                 }
                 .show()
@@ -165,12 +166,15 @@ class MainActivity : AppCompatActivity() {
 
         val docFile = DocumentFile.fromTreeUri(this, uri)
         docFile?.let { doc ->
-            TaskRunner().executeAsync(ExploreFacebookTask(doc, contentResolver),
+            val dialog = LoadingDialog(this)
+            TaskRunner().executeAsync(ExploreFacebookTask(doc, contentResolver, dialog.notifier),
                 object : TaskRunner.Callback<FacebookData?> {
                     override fun onComplete(result: FacebookData?) {
                         result?.let { res -> showFacebookData(res) }
+                        dialog.dismiss()
                     }
                 })
+            dialog.show()
         }
     }
 
@@ -189,26 +193,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class Adapter(private val conversations: List<ConversationData>) :
-        RecyclerView.Adapter<com.mandin.antoine.mydataanalyser.MainActivity.ViewHolder>() {
+        RecyclerView.Adapter<MainActivity.ViewHolder>() {
 
         override fun onCreateViewHolder(
             parent: ViewGroup,
             viewType: Int
-        ): com.mandin.antoine.mydataanalyser.MainActivity.ViewHolder {
+        ): MainActivity.ViewHolder {
             return ViewHolder(
                 LayoutInflater.from(this@MainActivity)
-                    .inflate(com.mandin.antoine.mydataanalyser.R.layout.item_view_conversation, parent, false)
+                    .inflate(R.layout.item_view_conversation, parent, false)
             )
         }
 
         override fun onBindViewHolder(
-            holder: com.mandin.antoine.mydataanalyser.MainActivity.ViewHolder,
+            holder: MainActivity.ViewHolder,
             position: Int
         ) {
             val conv = conversations[position]
-            holder.itemView.findViewById<TextView>(com.mandin.antoine.mydataanalyser.R.id.tvTitle).text = conv.title
+            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv.title
 
-            holder.itemView.findViewById<TextView>(com.mandin.antoine.mydataanalyser.R.id.tvStats).text =
+            holder.itemView.findViewById<TextView>(R.id.tvStats).text =
                 "${conv.totalMessageCount} messages \n" +
                         "starting the ${conv.firstMessageDate}"
 

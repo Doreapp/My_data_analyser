@@ -6,9 +6,12 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-    <include
-            android:id="@+id/viewConversations"
-            layout="@layout/view_conversations"/>
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/btnChooseFacebookFolder"
+    />
 
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="Choose Facebook folder"

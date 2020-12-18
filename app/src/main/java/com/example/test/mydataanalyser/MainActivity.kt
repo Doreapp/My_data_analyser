@@ -6,10 +6,17 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.test.mydataanalyser.facebook.ConversationData
 import com.example.test.mydataanalyser.facebook.ExploreFacebookTask
 import com.example.test.mydataanalyser.facebook.FacebookData
 import com.example.test.mydataanalyser.tools.TaskRunner
@@ -177,25 +184,37 @@ class MainActivity : AppCompatActivity() {
             c2.totalMessageCount.compareTo(c1.totalMessageCount)
         }
 
-        for (i in 1..10) {
-            val conv = facebookData.messagesData.conversations[i - 1]
-            Debug.i(
-                TAG, "TOP $i conv : ${conv.title} " +
-                        "\nwith ${conv.totalMessageCount} msg and " +
-                        "\nstarting in ${conv.firstMessageDate} with " +
-                        conv.messageCount.toList().toTypedArray().contentToString().replace("(Per", "\n(Per")
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = Adapter(facebookData.messagesData.conversations)
+    }
+
+    inner class Adapter(private val conversations: List<ConversationData>) :
+        RecyclerView.Adapter<ViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            return ViewHolder(
+                LayoutInflater.from(this@MainActivity)
+                    .inflate(R.layout.item_view_conversation, parent, false)
             )
         }
 
-        facebookData.messagesData.conversations.sortWith { c1, c2 ->
-            c1.firstMessageDate!!.compareTo(c2.firstMessageDate)
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val conv = conversations[position]
+            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv.title
+
+            holder.itemView.findViewById<TextView>(R.id.tvStats).text =
+                "${conv.totalMessageCount} messages \n" +
+                        "starting the ${conv.firstMessageDate}"
+
         }
 
-        for (i in 1..10) {
-            val conv = facebookData.messagesData.conversations[i - 1]
-            Debug.i(TAG, "TOP $i conv : ${conv.title} \nstarting in ${conv.firstMessageDate}")
+        override fun getItemCount(): Int {
+            return conversations.size
         }
 
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     }
 }

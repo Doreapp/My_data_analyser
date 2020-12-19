@@ -1,0 +1,254 @@
+package com.mandin.antoine.mydataanalyser.facebook.database
+
+import android.content.ContentValues
+import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
+import android.provider.BaseColumns
+import com.mandin.antoine.mydataanalyser.facebook.Persons
+import com.mandin.antoine.mydataanalyser.facebook.model.Person
+import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
+import com.mandin.antoine.mydataanalyser.utils.Debug
+import com.mandin.antoine.mydataanalyser.utils.database.Names
+
+/**
+ * Database Helper for Facebook database
+ *
+ * @see Names.FACEBOOK_DB
+ */
+class FacebookDbHelper(context: Context?) :
+    SQLiteOpenHelper(context, Names.FACEBOOK_DB, null, DATABASE_VERSION) {
+    private val TAG = "FacebookDbHelper"
+
+    companion object {
+        // If you change the database schema, you must increment the database version.
+        /**
+         * Version of the database, link to a scheme
+         */
+        const val DATABASE_VERSION = 2
+    }
+
+    override fun onCreate(db: SQLiteDatabase?) {
+        db?.execSQL(ConversationEntries.getSqlCreateEntries())
+        db?.execSQL(ConversationEntries.Participants.getSqlCreateEntries())
+        db?.execSQL(PersonEntries.getSqlCreateEntries())
+    }
+
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        db?.execSQL(ConversationEntries.getSqlDeleteEntries())
+        db?.execSQL(ConversationEntries.Participants.getSqlDeleteEntries())
+        db?.execSQL(PersonEntries.getSqlDeleteEntries())
+        onCreate(db)
+    }
+
+    fun clear() {
+        onUpgrade(writableDatabase, 0, DATABASE_VERSION)
+    }
+
+    fun findConversationBoxData(): ConversationBoxData? {
+        Debug.i(TAG, "findConversationBoxData")
+        val cursor = readableDatabase.rawQuery(
+            "SELECT * FROM ${ConversationEntries.TABLE_NAME}",
+            null
+        )
+
+        val conversations = ArrayList<ConversationData>()
+        with(cursor) {
+            if (moveToFirst()) {
+                do {
+                    val id = getId(this)
+                    val title = getString(this, ConversationEntries.COLUMN_TITLE)
+                    val path = getString(this, ConversationEntries.COLUMN_PATH)
+                    val isStillParticipant = getBoolean(this, ConversationEntries.COLUMN_IS_STILL_PARTICIPANT)
+                    val messageCount = getInt(this, ConversationEntries.COLUMN_MESSAGE_COUNT)
+                    val photoCount = getInt(this, ConversationEntries.COLUMN_PHOTO_COUNT)
+                    val audioCount = getInt(this, ConversationEntries.COLUMN_AUDIO_COUNT)
+                    val gifCount = getInt(this, ConversationEntries.COLUMN_GIF_COUNT)
+                    val participants = findParticipants(id)
+
+                    conversations.add(
+                        ConversationData(
+                            id, title, path,
+                            participants,
+                            isStillParticipant,
+                            messageCount,
+                            photoCount,
+                            audioCount, gifCount
+                        )
+                    )
+                } while (moveToNext())
+            }
+            close()
+        }
+        if (conversations.isNotEmpty())
+            return ConversationBoxData(
+                null,
+                null,
+                conversations,
+                null
+            )
+        return null
+    }
+
+    fun findParticipants(idConversation: Long): Set<Person> {
+        Debug.i(TAG, "findParticipants : idConversation=$idConversation")
+        val cursor = readableDatabase.rawQuery(
+            "SELECT ${PersonEntries.TABLE_NAME}.${BaseColumns._ID}, " +
+                    "${PersonEntries.TABLE_NAME}.${PersonEntries.COLUMN_NAME} " +
+                    "FROM " +
+                    "${ConversationEntries.Participants.TABLE_NAME} JOIN " +
+                    "${PersonEntries.TABLE_NAME} ON " +
+                    "${ConversationEntries.Participants.TABLE_NAME}." +
+                    "${ConversationEntries.Participants.PERSON_ID} = " +
+                    "${PersonEntries.TABLE_NAME}.${BaseColumns._ID} " +
+                    "WHERE " +
+                    "${ConversationEntries.Participants.TABLE_NAME}." +
+                    "${ConversationEntries.Participants.CONVERSATION_ID} = ?",
+            arrayOf("$idConversation")
+        )
+
+        val participants = HashSet<Person>()
+        with(cursor) {
+            if (moveToFirst()) {
+                do {
+                    val id = getId(this)
+                    val name = getString(this, PersonEntries.COLUMN_NAME)
+                    val person = Person(id, name)
+                    Persons.addPersonIfNew(person)
+                    participants.add(person)
+                } while (moveToNext())
+            }
+            close()
+        }
+        return participants
+    }
+
+    fun persist(conversationBoxData: ConversationBoxData): ConversationBoxData {
+        Debug.i(TAG, "persist conversationBoxData : $conversationBoxData")
+        // TODO persist other datas
+        for (conversationData in conversationBoxData.inbox!!)
+            persist(conversationData)
+
+        return conversationBoxData
+    }
+
+    fun persist(conversationData: ConversationData): ConversationData {
+        Debug.i(TAG, "persist conversationData : $conversationData")
+        val values = ContentValues().apply {
+            put(ConversationEntries.COLUMN_TITLE, conversationData.title)
+            put(ConversationEntries.COLUMN_PATH, conversationData.path)
+            put(ConversationEntries.COLUMN_IS_STILL_PARTICIPANT, conversationData.isStillParticipant)
+            put(ConversationEntries.COLUMN_MESSAGE_COUNT, conversationData.messageCount)
+            put(ConversationEntries.COLUMN_PHOTO_COUNT, conversationData.photoCount)
+            put(ConversationEntries.COLUMN_AUDIO_COUNT, conversationData.audioCount)
+            put(ConversationEntries.COLUMN_GIF_COUNT, conversationData.gifCount)
+        }
+
+        val convId = writableDatabase?.insert(
+            ConversationEntries.TABLE_NAME,
+            null, values
+        )
+
+        conversationData.id = convId
+
+        conversationData.participants?.let { persons ->
+            for (person in persons) {
+                val storedPerson = findPersonByName(person.name!!)
+                when (storedPerson) {
+                    null -> persist(person)
+                    else -> person.id = storedPerson.id
+                }
+                persistParticipant(conversationData, person)
+            }
+        }
+
+        return conversationData
+    }
+
+    private fun persistParticipant(conversationData: ConversationData, person: Person) {
+        Debug.i(TAG, "persistParticipant : $conversationData + $person")
+        val values = ContentValues().apply {
+            put(ConversationEntries.Participants.CONVERSATION_ID, conversationData.id)
+            put(ConversationEntries.Participants.PERSON_ID, person.id)
+        }
+
+        writableDatabase?.insert(
+            ConversationEntries.Participants.TABLE_NAME,
+            null, values
+        )
+    }
+
+    fun persist(person: Person): Person {
+        Debug.i(TAG, "persist person : $person")
+        val values = ContentValues().apply {
+            put(PersonEntries.COLUMN_NAME, person.name)
+        }
+
+        val id = writableDatabase.insert(
+            PersonEntries.TABLE_NAME,
+            null,
+            values
+        )
+
+        person.id = id
+        Persons.addPerson(person)
+        return person
+    }
+
+    fun findPersonByName(name: String): Person? {
+        Persons.getPerson(name)?.let {
+            return it
+        }
+
+        val projection = arrayOf(
+            BaseColumns._ID,
+            PersonEntries.COLUMN_NAME
+        )
+
+        val selection = "${PersonEntries.COLUMN_NAME} = ?"
+
+        val cursor = readableDatabase.query(
+            PersonEntries.TABLE_NAME,   // The table to query
+            projection,             // The array of columns to return (pass null to get all)
+            selection,              // The columns for the WHERE clause
+            arrayOf(name),          // The values for the WHERE clause
+            null,                   // don't group the rows
+            null,                   // don't filter by row groups
+            null               // The sort order
+        )
+
+        var person: Person? = null
+        if (cursor.moveToFirst()) {
+            val id = getId(cursor)
+            val name = getString(cursor, PersonEntries.COLUMN_NAME)
+            person = Person(id, name)
+
+            Persons.addPerson(person)
+        }
+
+        cursor.close()
+        return person
+    }
+
+    fun getInt(cursor: Cursor, colName: String): Int {
+        return cursor.getInt(cursor.getColumnIndexOrThrow(colName))
+    }
+
+    fun getLong(cursor: Cursor, colName: String): Long {
+        return cursor.getLong(cursor.getColumnIndexOrThrow(colName))
+    }
+
+    fun getId(cursor: Cursor): Long {
+        return cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID))
+    }
+
+    fun getString(cursor: Cursor, colName: String): String {
+        return cursor.getString(cursor.getColumnIndexOrThrow(colName))
+    }
+
+    fun getBoolean(cursor: Cursor, colName: String): Boolean {
+        return cursor.getInt(cursor.getColumnIndexOrThrow(colName)) != 0
+    }
+}

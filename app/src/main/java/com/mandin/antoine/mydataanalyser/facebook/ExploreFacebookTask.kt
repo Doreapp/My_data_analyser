@@ -11,6 +11,9 @@ import com.mandin.antoine.mydataanalyser.tools.TaskNotifier
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task to explore the facebook folder
+ */
 class ExploreFacebookTask(
     private val docFile: DocumentFile,
     private val context: Context,
@@ -19,6 +22,9 @@ class ExploreFacebookTask(
     private val TAG = "ExploreFacebookTask"
     private val dbHelper = FacebookDbHelper(context)
 
+    /**
+     * Main function : Read files in the folder
+     */
     override fun call(): FacebookData {
         Debug.i(TAG, "<call>")
         notifier?.notify("Loading... [Clear database]")
@@ -33,6 +39,9 @@ class ExploreFacebookTask(
         )
     }
 
+    /**
+     * Build conversation box data from the folder of conversations
+     */
     fun buildConversationBoxData(messagesFolder: DocumentFile): ConversationBoxData {
         Debug.i(TAG, "buildConversationBoxData - messages folder'${messagesFolder.uri.path}'")
         val inboxConversations = ArrayList<ConversationData>()
@@ -60,6 +69,9 @@ class ExploreFacebookTask(
         return dbHelper.persist(conversationBoxData)
     }
 
+    /**
+     * Build a conversation data from the folder containing data about a conversation
+     */
     fun buildConversationData(conversationFolder: DocumentFile): ConversationData {
         Debug.i(TAG, "buildConversationData")
 

@@ -12,10 +12,19 @@ import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.database.Names
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 /**
  * Database Helper for Facebook database
  *
+ * Queries :
+ * * `Conversations` table
+ * * `Person` table
+ *
+ * @see ConversationEntries
+ * @see PersonEntries
  * @see Names.FACEBOOK_DB
  */
 class FacebookDbHelper(context: Context?) :
@@ -43,10 +52,16 @@ class FacebookDbHelper(context: Context?) :
         onCreate(db)
     }
 
+    /**
+     * Delete all the stored information
+     */
     fun clear() {
         onUpgrade(writableDatabase, 0, DATABASE_VERSION)
     }
 
+    /**
+     * Read a the conversation box data
+     */
     fun findConversationBoxData(): ConversationBoxData? {
         Debug.i(TAG, "findConversationBoxData")
         val cursor = readableDatabase.rawQuery(
@@ -92,6 +107,11 @@ class FacebookDbHelper(context: Context?) :
         return null
     }
 
+    /**
+     * Find the participants of a conversation
+     *
+     * @param idConversation id of the conversation
+     */
     fun findParticipants(idConversation: Long): Set<Person> {
         Debug.i(TAG, "findParticipants : idConversation=$idConversation")
         val cursor = readableDatabase.rawQuery(
@@ -125,6 +145,10 @@ class FacebookDbHelper(context: Context?) :
         return participants
     }
 
+    /**
+     * Persist a conversation box data.
+     * = Save it
+     */
     fun persist(conversationBoxData: ConversationBoxData): ConversationBoxData {
         Debug.i(TAG, "persist conversationBoxData : $conversationBoxData")
         // TODO persist other datas
@@ -134,6 +158,10 @@ class FacebookDbHelper(context: Context?) :
         return conversationBoxData
     }
 
+    /**
+     * Persist a conversation data.
+     * = Save it and give it an id
+     */
     fun persist(conversationData: ConversationData): ConversationData {
         Debug.i(TAG, "persist conversationData : $conversationData")
         val values = ContentValues().apply {
@@ -167,6 +195,10 @@ class FacebookDbHelper(context: Context?) :
         return conversationData
     }
 
+    /**
+     * Persist a participant into a conversation
+     * = Save the Person if necessary and save the association
+     */
     private fun persistParticipant(conversationData: ConversationData, person: Person) {
         Debug.i(TAG, "persistParticipant : $conversationData + $person")
         val values = ContentValues().apply {
@@ -180,6 +212,9 @@ class FacebookDbHelper(context: Context?) :
         )
     }
 
+    /**
+     * Persist a person = Save it and give it an id
+     */
     fun persist(person: Person): Person {
         Debug.i(TAG, "persist person : $person")
         val values = ContentValues().apply {
@@ -197,6 +232,11 @@ class FacebookDbHelper(context: Context?) :
         return person
     }
 
+    /**
+     * Find a person by its name
+     *
+     * @see Persons
+     */
     fun findPersonByName(name: String): Person? {
         Persons.getPerson(name)?.let {
             return it
@@ -232,23 +272,27 @@ class FacebookDbHelper(context: Context?) :
         return person
     }
 
-    fun getInt(cursor: Cursor, colName: String): Int {
+    private fun getInt(cursor: Cursor, colName: String): Int {
         return cursor.getInt(cursor.getColumnIndexOrThrow(colName))
     }
 
-    fun getLong(cursor: Cursor, colName: String): Long {
+    private fun getLong(cursor: Cursor, colName: String): Long {
         return cursor.getLong(cursor.getColumnIndexOrThrow(colName))
     }
 
-    fun getId(cursor: Cursor): Long {
+    private fun getId(cursor: Cursor): Long {
         return cursor.getLong(cursor.getColumnIndexOrThrow(BaseColumns._ID))
     }
 
-    fun getString(cursor: Cursor, colName: String): String {
+    private fun getString(cursor: Cursor, colName: String): String {
         return cursor.getString(cursor.getColumnIndexOrThrow(colName))
     }
 
-    fun getBoolean(cursor: Cursor, colName: String): Boolean {
+    private fun getBoolean(cursor: Cursor, colName: String): Boolean {
         return cursor.getInt(cursor.getColumnIndexOrThrow(colName)) != 0
+    }
+
+    private fun getDate(cursor: Cursor, colName: String): Date {
+        return Date(cursor.getLong(cursor.getColumnIndexOrThrow(colName)))
     }
 }

@@ -2,6 +2,12 @@ package com.mandin.antoine.mydataanalyser.facebook.database
 
 import com.mandin.antoine.mydataanalyser.utils.database.BaseColumns
 
+/**
+ * Table entries for the Person Table
+ *
+ * contains
+ * * `name` : Name of the person
+ */
 object PersonEntries : BaseColumns {
     const val TABLE_NAME = "persons"
     const val COLUMN_NAME = "name"

@@ -1,10 +1,16 @@
 package com.mandin.antoine.mydataanalyser.facebook
 
+/**
+ * Paths in the facebook folder
+ */
 object Paths {
     const val PATH_ABOUT_YOU = "about_you"
 
     // TODO Add other paths (C:\Users\antoi\Downloads\tmp\facebook-AntoineMandin)
 
+    /**
+     * Paths to messages folder and sub folders
+     */
     object Messages {
         const val PATH = "messages"
         const val ARCHIVED_THREADS = "archived_threads"

@@ -7,6 +7,9 @@ data class Conversation(
     var title: String?,
     var isStillParticipant: Boolean = false
 ) {
+    /**
+     * Add every message from `other` into this conversation
+     */
     fun import(other: Conversation) {
         messages.addAll(other.messages)
     }

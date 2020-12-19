@@ -5,6 +5,10 @@ import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskNotifier
 import java.util.concurrent.Callable
 
+
+/**
+ * Async task used to read the database and retrieve facebook data
+ */
 class LoadDatabaseTask(
     context: Context,
     private val notifier: TaskNotifier?

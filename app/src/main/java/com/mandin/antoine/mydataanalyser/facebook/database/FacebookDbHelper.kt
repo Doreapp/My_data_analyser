@@ -81,7 +81,7 @@ class FacebookDbHelper(context: Context?) :
                     val photoCount = getInt(this, ConversationEntries.COLUMN_PHOTO_COUNT)
                     val audioCount = getInt(this, ConversationEntries.COLUMN_AUDIO_COUNT)
                     val gifCount = getInt(this, ConversationEntries.COLUMN_GIF_COUNT)
-                    val date = getDate(this, ConversationEntries.COLUMN_GIF_COUNT)
+                    val date = getDate(this, ConversationEntries.COLUMN_CREATION_DATE)
                     val participants = findParticipants(id)
 
                     conversations.add(

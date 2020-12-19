@@ -25,6 +25,7 @@ object ConversationEntries : BaseColumns {
     const val COLUMN_PHOTO_COUNT = "photo_count"
     const val COLUMN_AUDIO_COUNT = "audio_count"
     const val COLUMN_GIF_COUNT = "gif_count"
+    const val COLUMN_CREATION_DATE = "creation_date"
 
     object Participants : BaseColumns {
         const val TABLE_NAME = "conversation_participants"
@@ -53,7 +54,8 @@ object ConversationEntries : BaseColumns {
                 "$COLUMN_MESSAGE_COUNT INTEGER, " +
                 "$COLUMN_PHOTO_COUNT INTEGER, " +
                 "$COLUMN_AUDIO_COUNT INTEGER, " +
-                "$COLUMN_GIF_COUNT INTEGER)"
+                "$COLUMN_GIF_COUNT INTEGER, " +
+                "$COLUMN_CREATION_DATE INTEGER)"
     }
 
     override fun getSqlDeleteEntries(): String {

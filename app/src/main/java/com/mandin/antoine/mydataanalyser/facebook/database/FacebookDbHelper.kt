@@ -36,7 +36,7 @@ class FacebookDbHelper(context: Context?) :
         /**
          * Version of the database, link to a scheme
          */
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 3
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -81,6 +81,7 @@ class FacebookDbHelper(context: Context?) :
                     val photoCount = getInt(this, ConversationEntries.COLUMN_PHOTO_COUNT)
                     val audioCount = getInt(this, ConversationEntries.COLUMN_AUDIO_COUNT)
                     val gifCount = getInt(this, ConversationEntries.COLUMN_GIF_COUNT)
+                    val date = getDate(this, ConversationEntries.COLUMN_GIF_COUNT)
                     val participants = findParticipants(id)
 
                     conversations.add(
@@ -90,7 +91,8 @@ class FacebookDbHelper(context: Context?) :
                             isStillParticipant,
                             messageCount,
                             photoCount,
-                            audioCount, gifCount
+                            audioCount, gifCount,
+                            date
                         )
                     )
                 } while (moveToNext())
@@ -151,7 +153,7 @@ class FacebookDbHelper(context: Context?) :
      */
     fun persist(conversationBoxData: ConversationBoxData): ConversationBoxData {
         Debug.i(TAG, "persist conversationBoxData : $conversationBoxData")
-        // TODO persist other datas
+        // TODO persist other data
         for (conversationData in conversationBoxData.inbox!!)
             persist(conversationData)
 
@@ -172,6 +174,7 @@ class FacebookDbHelper(context: Context?) :
             put(ConversationEntries.COLUMN_PHOTO_COUNT, conversationData.photoCount)
             put(ConversationEntries.COLUMN_AUDIO_COUNT, conversationData.audioCount)
             put(ConversationEntries.COLUMN_GIF_COUNT, conversationData.gifCount)
+            put(ConversationEntries.COLUMN_CREATION_DATE, conversationData.creationDate?.time)
         }
 
         val convId = writableDatabase?.insert(
@@ -183,8 +186,7 @@ class FacebookDbHelper(context: Context?) :
 
         conversationData.participants?.let { persons ->
             for (person in persons) {
-                val storedPerson = findPersonByName(person.name!!)
-                when (storedPerson) {
+                when (val storedPerson = findPersonByName(person.name!!)) {
                     null -> persist(person)
                     else -> person.id = storedPerson.id
                 }

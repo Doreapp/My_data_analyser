@@ -109,7 +109,8 @@ class ExploreFacebookTask(
             messageCount,
             photoCount,
             audioCount,
-            gifCount
+            gifCount,
+            conversation?.findCreationDate()
         )
 
         Debug.i(

@@ -1,6 +1,7 @@
 package com.mandin.antoine.mydataanalyser.facebook.model.data
 
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
+import java.util.*
 
 data class ConversationData(
     var id: Long?,
@@ -11,5 +12,6 @@ data class ConversationData(
     var messageCount: Int,
     var photoCount: Int,
     var audioCount: Int,
-    var gifCount: Int
+    var gifCount: Int,
+    var creationDate: Date?
 )

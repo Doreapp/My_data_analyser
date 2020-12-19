@@ -242,7 +242,7 @@ class MainActivity : AppCompatActivity() {
             holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv?.title
 
             holder.itemView.findViewById<TextView>(R.id.tvStats).text =
-                "${conv?.messageCount} messages"
+                "${conv?.messageCount} messages - Creating on ${conv?.creationDate}"
 
         }
 

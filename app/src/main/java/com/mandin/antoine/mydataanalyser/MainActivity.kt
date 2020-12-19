@@ -16,9 +16,11 @@ import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mandin.antoine.mydataanalyser.facebook.ConversationData
 import com.mandin.antoine.mydataanalyser.facebook.ExploreFacebookTask
-import com.mandin.antoine.mydataanalyser.facebook.FacebookData
+import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
+import com.mandin.antoine.mydataanalyser.facebook.database.LoadDatabaseTask
+import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
@@ -29,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     val TAG: String = "MainActivity"
     var readFilePermissionDialog: AlertDialog? = null
+    private var facebookDbHelper: FacebookDbHelper? = null
 
     /**
      * on activity create
@@ -37,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         Debug.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         when {
             ContextCompat.checkSelfPermission(
@@ -56,6 +58,8 @@ class MainActivity : AppCompatActivity() {
         btnChooseFacebookFolder.setOnClickListener {
             startPickFolderIntent(Constants.REQUEST_CODE_PICK_FACEBOOK_FOLDER)
         }
+
+        loadDatabaseData()
     }
 
     /**
@@ -98,7 +102,8 @@ class MainActivity : AppCompatActivity() {
      * On request permission result
      */
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>,
+        requestCode: Int,
+        permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -131,6 +136,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        facebookDbHelper?.close()
+        super.onDestroy()
     }
 
     /**
@@ -167,10 +177,13 @@ class MainActivity : AppCompatActivity() {
         val docFile = DocumentFile.fromTreeUri(this, uri)
         docFile?.let { doc ->
             val dialog = LoadingDialog(this)
-            TaskRunner().executeAsync(ExploreFacebookTask(doc, contentResolver, dialog.notifier),
+            TaskRunner().executeAsync(
+                ExploreFacebookTask(doc, this, dialog.notifier),
                 object : TaskRunner.Callback<FacebookData?> {
                     override fun onComplete(result: FacebookData?) {
-                        result?.let { res -> showFacebookData(res) }
+                        result?.let { res ->
+                            showFacebookData(res)
+                        }
                         dialog.dismiss()
                     }
                 })
@@ -178,21 +191,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun loadDatabaseData() {
+        val dialog = LoadingDialog(this)
+        TaskRunner().executeAsync(
+            LoadDatabaseTask(this, dialog.notifier),
+            object : TaskRunner.Callback<FacebookData?> {
+                override fun onComplete(result: FacebookData?) {
+                    Debug.i(TAG, "load database data result : $result")
+                    result?.let { res ->
+                        showFacebookData(res)
+                    }
+                    dialog.dismiss()
+                }
+            })
+        dialog.show()
+    }
+
     fun showFacebookData(facebookData: FacebookData) {
         Debug.i(TAG, "show facebook data : $facebookData")
 
-        Debug.i(TAG, "messages data : ${facebookData.messagesData.counts()}")
-        Debug.i(TAG, "total message count : ${facebookData.messagesData.totalMessageCount}")
+        Debug.i(TAG, "total message count : ${facebookData.conversationBoxData?.inbox?.size}")
 
-        facebookData.messagesData.conversations.sortWith { c1, c2 ->
-            c2.totalMessageCount.compareTo(c1.totalMessageCount)
-        }
+        facebookData.conversationBoxData?.inbox =
+            facebookData.conversationBoxData?.inbox?.sortedWith { c1, c2 ->
+                c2.messageCount.compareTo(c1.messageCount)
+            }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = Adapter(facebookData.messagesData.conversations)
+        recyclerView.adapter = Adapter(facebookData.conversationBoxData?.inbox)
     }
 
-    inner class Adapter(private val conversations: List<ConversationData>) :
+    inner class Adapter(private val conversations: List<ConversationData>?) :
         RecyclerView.Adapter<MainActivity.ViewHolder>() {
 
         override fun onCreateViewHolder(
@@ -209,17 +238,17 @@ class MainActivity : AppCompatActivity() {
             holder: MainActivity.ViewHolder,
             position: Int
         ) {
-            val conv = conversations[position]
-            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv.title
+            val conv = conversations?.get(position)
+            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv?.title
 
             holder.itemView.findViewById<TextView>(R.id.tvStats).text =
-                "${conv.totalMessageCount} messages \n" +
-                        "starting the ${conv.firstMessageDate}"
+                "${conv?.messageCount} messages"
 
         }
 
         override fun getItemCount(): Int {
-            return conversations.size
+            conversations?.let { return it.size }
+            return 0
         }
 
     }

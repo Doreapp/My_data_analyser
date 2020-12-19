@@ -9,7 +9,9 @@ import kotlinx.android.synthetic.main.dialog_loading.*
 class LoadingDialog(context: Context) : Dialog(context) {
     val notifier: TaskNotifier = object : TaskNotifier {
         override fun notify(message: String) {
-            tvInfo.text = message
+            tvInfo.post {
+                tvInfo.text = message
+            }
         }
     }
 

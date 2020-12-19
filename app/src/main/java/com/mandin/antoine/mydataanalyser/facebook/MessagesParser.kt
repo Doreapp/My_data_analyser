@@ -1,6 +1,7 @@
 package com.mandin.antoine.mydataanalyser.facebook
 
 import android.util.JsonReader
+import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.Message
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
@@ -45,7 +46,7 @@ import kotlin.collections.HashSet
  * }
  * ```
  */
-class MessagesParser {
+class MessagesParser(private val dbHelper: FacebookDbHelper) {
 
     /**
      * `List` of persons participating into the conversation
@@ -82,7 +83,7 @@ class MessagesParser {
     @Throws(IOException::class)
     fun readConversation(reader: JsonReader): Conversation {
         var title: String? = null
-        var isStillParticipant: Boolean = false
+        var isStillParticipant = false
         reader.beginObject()
         while (reader.hasNext()) {
             when (reader.nextName()) {
@@ -105,7 +106,7 @@ class MessagesParser {
         }
         reader.endObject()
 
-        return Conversation(participants, messages, title, isStillParticipant)
+        return Conversation(null, participants, messages, title, isStillParticipant)
     }
 
     /**
@@ -149,8 +150,8 @@ class MessagesParser {
             }
         }
         reader.endObject()
-        name?.let { return Persons.getPerson(name) }
-        return null
+
+        return getPerson(name)
     }
 
     /**
@@ -203,8 +204,16 @@ class MessagesParser {
         }
         reader.endObject()
 
-        val person = personName?.let { Persons.getPerson(personName) }
+        val person = getPerson(personName)
 
-        return Message(person, date, content)
+        return Message(null, person, date, content)
+    }
+
+    private fun getPerson(name: String?): Person? {
+        name?.let { name ->
+            dbHelper.findPersonByName(name)?.let { person -> return person }
+            return dbHelper.persist(Person(null, name))
+        }
+        return null
     }
 }

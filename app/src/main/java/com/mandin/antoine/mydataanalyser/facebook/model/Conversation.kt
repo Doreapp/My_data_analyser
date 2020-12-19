@@ -1,5 +1,7 @@
 package com.mandin.antoine.mydataanalyser.facebook.model
 
+import java.util.*
+
 data class Conversation(
     var id: Long?,
     var participants: HashSet<Person>,
@@ -27,5 +29,14 @@ data class Conversation(
 
     override fun hashCode(): Int {
         return id.hashCode()
+    }
+
+    fun findCreationDate(): Date? {
+        var currentLowest = messages[0].sendingDate
+        messages.forEach { message ->
+            if (message.sendingDate?.before(currentLowest) == true)
+                currentLowest = message.sendingDate
+        }
+        return currentLowest
     }
 }

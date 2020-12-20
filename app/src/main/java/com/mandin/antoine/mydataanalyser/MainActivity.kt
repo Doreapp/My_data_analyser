@@ -176,25 +176,27 @@ class MainActivity : AppCompatActivity() {
 
         val docFile = DocumentFile.fromTreeUri(this, uri)
         docFile?.let { doc ->
-            val dialog = LoadingDialog(this)
-            TaskRunner().executeAsync(
-                ExploreFacebookTask(doc, this, dialog.notifier),
-                object : TaskRunner.Callback<FacebookData?> {
-                    override fun onComplete(result: FacebookData?) {
-                        result?.let { res ->
-                            showFacebookData(res)
+            with(LoadingDialog(this)) {
+                hasProgress = true
+                TaskRunner().executeAsync(
+                    ExploreFacebookTask(doc, this@MainActivity, observer),
+                    object : TaskRunner.Callback<FacebookData?> {
+                        override fun onComplete(result: FacebookData?) {
+                            result?.let { res ->
+                                showFacebookData(res)
+                            }
+                            dismiss()
                         }
-                        dialog.dismiss()
-                    }
-                })
-            dialog.show()
+                    })
+                show()
+            }
         }
     }
 
     fun loadDatabaseData() {
         val dialog = LoadingDialog(this)
         TaskRunner().executeAsync(
-            LoadDatabaseTask(this, dialog.notifier),
+            LoadDatabaseTask(this, dialog.observer),
             object : TaskRunner.Callback<FacebookData?> {
                 override fun onComplete(result: FacebookData?) {
                     Debug.i(TAG, "load database data result : $result")

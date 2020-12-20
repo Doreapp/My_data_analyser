@@ -8,7 +8,6 @@ import com.mandin.antoine.mydataanalyser.facebook.model.Person
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -67,7 +66,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
      */
     @Throws(IOException::class)
     fun readJson(input: InputStream): Conversation {
-        val reader = JsonReader(InputStreamReader(input, StandardCharsets.ISO_8859_1))
+        val reader = JsonReader(InputStreamReader(input, Charsets.UTF_8))
         return reader.use {
             readConversation(reader)
         }
@@ -94,7 +93,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
                     readMessagesArray(reader)
                 }
                 "title" -> {
-                    title = reader.nextString()
+                    title = nextString(reader)
                 }
                 "is_still_participant" -> {
                     isStillParticipant = reader.nextBoolean()
@@ -142,7 +141,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         while (reader.hasNext()) {
             when (reader.nextName()) {
                 "name" -> {
-                    name = reader.nextString()
+                    name = nextString(reader)
                 }
                 else -> {
                     reader.skipValue()
@@ -189,13 +188,13 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         while (reader.hasNext()) {
             when (reader.nextName()) {
                 "sender_name" -> {
-                    personName = reader.nextString()
+                    personName = nextString(reader)
                 }
                 "timestamp_ms" -> {
                     date = Date(reader.nextLong())
                 }
                 "content" -> {
-                    content = reader.nextString()
+                    content = nextString(reader)
                 }
                 else -> {
                     reader.skipValue()
@@ -215,5 +214,9 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
             return dbHelper.persist(Person(null, name))
         }
         return null
+    }
+
+    private fun nextString(reader: JsonReader): String {
+        return CharsetsUtils.translateIsoToUtf(reader.nextString())
     }
 }

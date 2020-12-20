@@ -64,9 +64,9 @@ class ExploreFacebookTask(
         )
         Debug.i(
             TAG, "buildConversationBoxData - " +
-                    "return $conversationBoxData (+its id)"
+                    "return $conversationBoxData"
         )
-        return dbHelper.persist(conversationBoxData)
+        return conversationBoxData
     }
 
     /**

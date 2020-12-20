@@ -19,7 +19,7 @@ import com.mandin.antoine.mydataanalyser.utils.database.BaseColumns
 object ConversationEntries : BaseColumns {
     const val TABLE_NAME = "conversations"
     const val COLUMN_TITLE = "title"
-    const val COLUMN_PATH = "path"
+    const val COLUMN_URI = "uri"
     const val COLUMN_IS_STILL_PARTICIPANT = "is_still_participant"
     const val COLUMN_MESSAGE_COUNT = "message_count"
     const val COLUMN_PHOTO_COUNT = "photo_count"
@@ -49,7 +49,7 @@ object ConversationEntries : BaseColumns {
         return "CREATE TABLE $TABLE_NAME (" +
                 "$_ID INTEGER PRIMARY KEY, " +
                 "$COLUMN_TITLE TEXT, " +
-                "$COLUMN_PATH TEXT, " +
+                "$COLUMN_URI TEXT, " +
                 "$COLUMN_IS_STILL_PARTICIPANT INTEGER, " +
                 "$COLUMN_MESSAGE_COUNT INTEGER, " +
                 "$COLUMN_PHOTO_COUNT INTEGER, " +

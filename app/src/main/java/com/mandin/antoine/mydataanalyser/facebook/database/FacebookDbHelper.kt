@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.net.Uri
 import android.provider.BaseColumns
 import com.mandin.antoine.mydataanalyser.facebook.Persons
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
@@ -36,7 +37,7 @@ class FacebookDbHelper(context: Context?) :
         /**
          * Version of the database, link to a scheme
          */
-        const val DATABASE_VERSION = 3
+        const val DATABASE_VERSION = 4
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -75,7 +76,7 @@ class FacebookDbHelper(context: Context?) :
                 do {
                     val id = getId(this)
                     val title = getString(this, ConversationEntries.COLUMN_TITLE)
-                    val path = getString(this, ConversationEntries.COLUMN_PATH)
+                    val uriDescription = getString(this, ConversationEntries.COLUMN_URI)
                     val isStillParticipant = getBoolean(this, ConversationEntries.COLUMN_IS_STILL_PARTICIPANT)
                     val messageCount = getInt(this, ConversationEntries.COLUMN_MESSAGE_COUNT)
                     val photoCount = getInt(this, ConversationEntries.COLUMN_PHOTO_COUNT)
@@ -86,7 +87,8 @@ class FacebookDbHelper(context: Context?) :
 
                     conversations.add(
                         ConversationData(
-                            id, title, path,
+                            id, title,
+                            Uri.parse(uriDescription),
                             participants,
                             isStillParticipant,
                             messageCount,
@@ -168,7 +170,7 @@ class FacebookDbHelper(context: Context?) :
         Debug.i(TAG, "persist conversationData : $conversationData")
         val values = ContentValues().apply {
             put(ConversationEntries.COLUMN_TITLE, conversationData.title)
-            put(ConversationEntries.COLUMN_PATH, conversationData.path)
+            put(ConversationEntries.COLUMN_URI, conversationData.uri.toString())
             put(ConversationEntries.COLUMN_IS_STILL_PARTICIPANT, conversationData.isStillParticipant)
             put(ConversationEntries.COLUMN_MESSAGE_COUNT, conversationData.messageCount)
             put(ConversationEntries.COLUMN_PHOTO_COUNT, conversationData.photoCount)

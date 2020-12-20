@@ -7,7 +7,7 @@ import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
-import com.mandin.antoine.mydataanalyser.tools.TaskNotifier
+import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
@@ -17,7 +17,7 @@ import java.util.concurrent.Callable
 class ExploreFacebookTask(
     private val docFile: DocumentFile,
     private val context: Context,
-    private val notifier: TaskNotifier?
+    private val observer: TaskObserver?
 ) : Callable<FacebookData?> {
     private val TAG = "ExploreFacebookTask"
     private val dbHelper = FacebookDbHelper(context)
@@ -27,9 +27,9 @@ class ExploreFacebookTask(
      */
     override fun call(): FacebookData {
         Debug.i(TAG, "<call>")
-        notifier?.notify("Loading... [Clear database]")
+        observer?.notify("Loading... [Clear database]")
         dbHelper.clear()
-        notifier?.notify("Loading... [Conversations]")
+        observer?.notify("Loading... [Conversations]")
         val conversationBoxData = docFile.findFile(Paths.Messages.PATH)?.let {
             buildConversationBoxData(it)
         }
@@ -48,11 +48,13 @@ class ExploreFacebookTask(
         messagesFolder.findFile(Paths.Messages.INBOX)?.listFiles()?.let { folders ->
             var count = 0
             val length = folders.size
+            observer?.setMaxProgress(length)
             for (folder in folders) {
                 inboxConversations.add(buildConversationData(folder))
 
                 count++
-                notifier?.notify("Analysing Conversations [inbox]. $count/$length conversations done.")
+                observer?.notify("Analysing Conversations [inbox]. $count/$length conversations done.")
+                observer?.notifyProgress(count)
             }
         }
 

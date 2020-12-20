@@ -103,7 +103,7 @@ class ExploreFacebookTask(
         val conversationData = ConversationData(
             null,
             conversation?.title,
-            path = conversationFolder.uri.path,
+            uri = conversationFolder.uri,
             participants = conversation?.participants,
             conversation?.isStillParticipant,
             messageCount,

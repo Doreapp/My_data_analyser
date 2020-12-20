@@ -244,6 +244,13 @@ class MainActivity : AppCompatActivity() {
             holder.itemView.findViewById<TextView>(R.id.tvStats).text =
                 "${conv?.messageCount} messages - Creating on ${conv?.creationDate}"
 
+            holder.itemView.setOnClickListener { view ->
+                Debug.i(TAG, "on click on $conv")
+                conv?.uri?.let { uri ->
+                    val file = DocumentFile.fromTreeUri(this@MainActivity, uri)
+                    Debug.i(TAG, "file $file. Exists? ${file?.exists()}")
+                }
+            }
         }
 
         override fun getItemCount(): Int {

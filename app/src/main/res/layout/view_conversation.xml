@@ -1,43 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-    <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textSize="@dimen/large"
-            android:textColor="@color/colorPrimary"/>
-
-    <TableLayout
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <TableRow android:padding="@dimen/spaceNormal">
-            <TextView android:text="Message count"/>
-            <TextView android:id="@+id/messageCount"
-                      android:textColor="@color/colorPrimary"/>
-        </TableRow>
-        <TableRow android:padding="@dimen/spaceNormal">
-            <TextView android:layout_width="wrap_content"
-                      android:text="First Message"/>
-            <TextView
-                    android:layout_weight="1"
-                    android:id="@+id/firstMessage"
-                    android:text="erfgtyhdfjnfherbgherfbgfhrfbhdhfsbrhkfbdkhfrebfherzjbffbhrebfj"
-                    android:textColor="@color/colorPrimary"/>
-        </TableRow>
-        <TableRow android:padding="@dimen/spaceNormal">
+            android:layout_height="match_parent">
 
-            <TextView android:layout_width="wrap_content"
-                      android:text="First Message date"/>
-            <TextView
-                    android:layout_weight="1" android:id="@+id/firstMessageDate"
+    <LinearLayout android:layout_width="match_parent"
+                  android:orientation="vertical"
+                  android:layout_height="wrap_content"
+                  android:padding="@dimen/spaceNormal">
 
-                    android:textColor="@color/colorPrimary"/>
-        </TableRow>
-    </TableLayout>
 
-</LinearLayout>
+        <TextView
+                android:id="@+id/tvConversationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/h1"
+                android:layout_margin="@dimen/spaceNormal"
+                android:textColor="@color/colorPrimary"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:id="@+id/tvConversationStatistics"
+                  android:layout_margin="@dimen/spaceSmall"
+                  android:gravity="center"
+                  android:layout_gravity="center_horizontal"
+                  android:textSize="@dimen/normal"
+                  android:text="123 567 messages sent\nStarted the 18/12/2016"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="@string/members"
+                  android:textSize="@dimen/h2"
+                  android:layout_marginTop="@dimen/spaceLarge"
+                  android:layout_marginBottom="@dimen/spaceSmall"
+                  android:textColor="@color/colorPrimaryDark"/>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_marginHorizontal="@dimen/spaceNormal"
+                      android:layout_height="wrap_content"
+                      android:orientation="horizontal">
+            <TextView android:layout_width="0dp"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content"
+                      android:text="Name"/>
+            <TextView android:layout_width="0dp"
+                      android:gravity="end"
+                      android:layout_weight="1"
+                      android:layout_height="wrap_content"
+                      android:text="Messages sent"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listMembers"/>
+
+    </LinearLayout>
+</ScrollView>

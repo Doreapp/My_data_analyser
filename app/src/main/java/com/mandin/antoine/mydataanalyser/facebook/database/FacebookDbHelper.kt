@@ -60,6 +60,43 @@ class FacebookDbHelper(context: Context?) :
         onUpgrade(writableDatabase, 0, DATABASE_VERSION)
     }
 
+    fun findConversationById(id: Long): ConversationData? {
+        val cursor = readableDatabase.rawQuery(
+            "SELECT * FROM ${ConversationEntries.TABLE_NAME} " +
+                    "WHERE ${BaseColumns._ID} = ?",
+            arrayOf("$id")
+        )
+
+        var conversation: ConversationData? = null
+        with(cursor) {
+            if (moveToFirst()) {
+                val title = getString(this, ConversationEntries.COLUMN_TITLE)
+                val uriDescription = getString(this, ConversationEntries.COLUMN_URI)
+                val isStillParticipant = getBoolean(this, ConversationEntries.COLUMN_IS_STILL_PARTICIPANT)
+                val messageCount = getInt(this, ConversationEntries.COLUMN_MESSAGE_COUNT)
+                val photoCount = getInt(this, ConversationEntries.COLUMN_PHOTO_COUNT)
+                val audioCount = getInt(this, ConversationEntries.COLUMN_AUDIO_COUNT)
+                val gifCount = getInt(this, ConversationEntries.COLUMN_GIF_COUNT)
+                val date = getDate(this, ConversationEntries.COLUMN_CREATION_DATE)
+                val participants = findParticipants(id)
+
+                conversation =
+                    ConversationData(
+                        id, title,
+                        Uri.parse(uriDescription),
+                        participants,
+                        isStillParticipant,
+                        messageCount,
+                        photoCount,
+                        audioCount, gifCount,
+                        date
+                    )
+            }
+            close()
+        }
+        return conversation
+    }
+
     /**
      * Read a the conversation box data
      */

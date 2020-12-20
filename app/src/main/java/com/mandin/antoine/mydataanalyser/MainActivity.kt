@@ -6,25 +6,19 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.mandin.antoine.mydataanalyser.facebook.ExploreFacebookTask
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.database.LoadDatabaseTask
-import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
+import com.mandin.antoine.mydataanalyser.views.facebook.ConversationsAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -214,55 +208,8 @@ class MainActivity : AppCompatActivity() {
 
         Debug.i(TAG, "total message count : ${facebookData.conversationBoxData?.inbox?.size}")
 
-        facebookData.conversationBoxData?.inbox =
-            facebookData.conversationBoxData?.inbox?.sortedWith { c1, c2 ->
-                c2.messageCount.compareTo(c1.messageCount)
-            }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = Adapter(facebookData.conversationBoxData?.inbox)
+        //recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = ConversationsAdapter(facebookData.conversationBoxData?.inbox)
     }
 
-    inner class Adapter(private val conversations: List<ConversationData>?) :
-        RecyclerView.Adapter<MainActivity.ViewHolder>() {
-
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
-        ): MainActivity.ViewHolder {
-            return ViewHolder(
-                LayoutInflater.from(this@MainActivity)
-                    .inflate(R.layout.item_view_conversation, parent, false)
-            )
-        }
-
-        override fun onBindViewHolder(
-            holder: MainActivity.ViewHolder,
-            position: Int
-        ) {
-            val conv = conversations?.get(position)
-            holder.itemView.findViewById<TextView>(R.id.tvTitle).text = conv?.title
-
-            holder.itemView.findViewById<TextView>(R.id.tvStats).text =
-                "${conv?.messageCount} messages - Creating on ${conv?.creationDate}"
-
-            holder.itemView.setOnClickListener { view ->
-                Debug.i(TAG, "on click on $conv")
-                conv?.uri?.let { uri ->
-                    val file = DocumentFile.fromTreeUri(this@MainActivity, uri)
-                    Debug.i(TAG, "file $file. Exists? ${file?.exists()}")
-                }
-            }
-        }
-
-        override fun getItemCount(): Int {
-            conversations?.let { return it.size }
-            return 0
-        }
-
-    }
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    }
 }

@@ -11,4 +11,5 @@
     <string name="need_file_permission">We need your permission for reading your files</string>
     <string name="members">Members</string>
     <string name="show_more">Show more</string>
+    <string name="show_photos">Show photos</string>
 </resources>

@@ -1,19 +1,16 @@
 package com.mandin.antoine.mydataanalyser.views
 
-import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.media.ThumbnailUtils
+import android.content.Context
+import android.graphics.Bitmap
 import android.util.DisplayMetrics
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.RecyclerView
-import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 
 
-class ImageAdapter(private var files: Array<DocumentFile>, private val spanCount: Int = 3) :
-    RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private val spanCount: Int = 3) :
+    RecyclerView.Adapter<ImageAdapter<I>.ViewHolder>() {
     private var holderSize: Int? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,11 +24,11 @@ class ImageAdapter(private var files: Array<DocumentFile>, private val spanCount
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.showImageFromFile(file = files[position])
+        holder.showImage(images[position])
     }
 
     override fun getItemCount(): Int {
-        return files.size
+        return images.size
     }
 
     inner class ViewHolder(itemView: ImageView) : RecyclerView.ViewHolder(itemView) {
@@ -44,23 +41,15 @@ class ImageAdapter(private var files: Array<DocumentFile>, private val spanCount
             }
         }
 
-        fun showImageFromFile(file: DocumentFile) {
+        fun showImage(image: Image) {
             with(itemView as ImageView) {
-                //First recycle
-                drawable.let {
-                    if (it is BitmapDrawable) {
-                        it.bitmap.recycle()
-                    }
-                }
-
-                //Then set the new drawable
-                itemView.context.contentResolver.openInputStream(file.uri)?.let {
-                    val imageBitmap = BitmapFactory.decodeStream(it)
-                    val thumbnailBitmap = ThumbnailUtils
-                        .extractThumbnail(imageBitmap, Constants.THUMBNAIL_SIZE, Constants.THUMBNAIL_SIZE);
-                    setImageBitmap(thumbnailBitmap)
-                }
+                setImageBitmap(image.getThumbnail(context))
             }
         }
+    }
+
+    interface Image {
+        fun getThumbnail(context: Context): Bitmap?
+        fun getPicture(context: Context): Bitmap?
     }
 }

@@ -2,6 +2,7 @@ package com.mandin.antoine.mydataanalyser.facebook.parsers
 
 import android.util.JsonReader
 import com.mandin.antoine.mydataanalyser.facebook.CharsetsUtils
+import com.mandin.antoine.mydataanalyser.facebook.PhotoDates
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.Message
@@ -197,6 +198,9 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
                 "content" -> {
                     content = nextString(reader)
                 }
+                "photos" -> {
+                    content = "<<${readPhotosArray(reader)} photo(s)>>"
+                }
                 else -> {
                     reader.skipValue()
                 }
@@ -207,6 +211,42 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         val person = getPerson(personName)
 
         return Message(null, person, date, content)
+    }
+
+    @Throws(IOException::class)
+    fun readPhotosArray(reader: JsonReader): Int {
+        var count = 0
+        reader.beginArray()
+        while (reader.hasNext()) {
+            readPhoto(reader)
+            count++
+        }
+        reader.endArray()
+
+        return count
+    }
+
+    @Throws(IOException::class)
+    fun readPhoto(reader: JsonReader) {
+        var uri: String? = null
+        var creationTimestamp: Long? = null
+
+        reader.beginObject()
+        while (reader.hasNext()) {
+            when (reader.nextName()) {
+                "uri" -> {
+                    uri = reader.nextString()
+                }
+                "creation_timestamp" -> {
+                    creationTimestamp = reader.nextLong()
+                }
+            }
+        }
+        reader.endObject()
+
+        if (uri != null && creationTimestamp != null) {
+            PhotoDates.putFromUri(uri, creationTimestamp)
+        }
     }
 
     private fun getPerson(name: String?): Person? {

@@ -104,6 +104,7 @@ class ConversationActivity : AppCompatActivity() {
                     return value.value
                 }
             }
+            adapter.showPercentage = true
 
             listMembers.adapter = adapter
             listMembers.isShowMoreButtonVisible = true

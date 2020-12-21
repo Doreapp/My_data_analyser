@@ -10,13 +10,24 @@ import com.mandin.antoine.mydataanalyser.R
 /**
  * Adapter constructing a list of item numbered
  *
- * TODO Add a percentage option to show the percentage represented by an item
- *
- * TODO Add a button show more in order not to show the whole list
  * (May need to create a layout going with this adapter)
  */
 abstract class NumberedItemAdapter<T>(private var list: List<T>) :
     BaseAdapter() {
+
+    private var numberSum: Int? = null
+
+    var showPercentage: Boolean
+        set(value) {
+            if (value) {
+                numberSum = 0
+                for (item in list)
+                    numberSum = numberSum!! + getNumber(item)
+            } else {
+                numberSum = null
+            }
+        }
+        get() = numberSum != null
 
     init {
         list = list.sortedWith { t1, t2 ->
@@ -37,10 +48,19 @@ abstract class NumberedItemAdapter<T>(private var list: List<T>) :
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        val view = LayoutInflater.from(parent?.context)
-            .inflate(R.layout.item_view_numbered_list, parent, false)
+
+        val view = convertView ?: LayoutInflater.from(parent?.context)
+            .inflate(
+                R.layout.item_view_numbered_list,
+                parent, false
+            )
+
         view.findViewById<TextView>(R.id.tvName).text = getName(list[position])
-        view.findViewById<TextView>(R.id.tvNumber).text = "" + getNumber(list[position])
+
+        val number = getNumber(list[position])
+        view.findViewById<TextView>(R.id.tvNumber).text = "$number" +
+                if (showPercentage) " (${number * 100 / numberSum!!}%)"
+                else ""
 
         return view
     }

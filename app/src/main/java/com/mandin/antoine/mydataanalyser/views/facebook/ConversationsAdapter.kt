@@ -11,6 +11,12 @@ import com.mandin.antoine.mydataanalyser.R
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.utils.Constants
 
+/**
+ * Adapter used to display a list of conversations
+ *
+ * @see ConversationData
+ * @see RecyclerView.Adapter
+ */
 class ConversationsAdapter(private var conversations: List<ConversationData>?) :
     RecyclerView.Adapter<ConversationsAdapter.ViewHolder>() {
 
@@ -19,8 +25,14 @@ class ConversationsAdapter(private var conversations: List<ConversationData>?) :
         sortBy(SortingType.MessageCount, false)
     }
 
+    /**
+     * Sorting type : by date, by message count or by alphabetical order
+     */
     enum class SortingType { Date, MessageCount, Alphabetical }
 
+    /**
+     * Create an empty view holder
+     */
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -31,6 +43,9 @@ class ConversationsAdapter(private var conversations: List<ConversationData>?) :
         )
     }
 
+    /**
+     * Fulfill the view holder display
+     */
     override fun onBindViewHolder(
         holder: ConversationsAdapter.ViewHolder,
         position: Int
@@ -49,11 +64,20 @@ class ConversationsAdapter(private var conversations: List<ConversationData>?) :
         }
     }
 
+    /**
+     * @return the number of items
+     */
     override fun getItemCount(): Int {
         conversations?.let { return it.size }
         return 0
     }
 
+    /**
+     * Sort the list by a sorting type
+     *
+     * @param sortingType by which parameter should we sort the list
+     * @param ascending do we sort ascending of descending (using false)
+     */
     fun sortBy(sortingType: SortingType, ascending: Boolean = true) {
         when (sortingType) {
             SortingType.Date -> {
@@ -87,6 +111,7 @@ class ConversationsAdapter(private var conversations: List<ConversationData>?) :
                 }
             }
         }
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -7,6 +7,14 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import com.mandin.antoine.mydataanalyser.R
 
+/**
+ * Adapter constructing a list of item numbered
+ *
+ * TODO Add a percentage option to show the percentage represented by an item
+ *
+ * TODO Add a button show more in order not to show the whole list
+ * (May need to create a layout going with this adapter)
+ */
 abstract class NumberedItemAdapter<T>(private var list: List<T>) :
     BaseAdapter() {
 
@@ -37,7 +45,15 @@ abstract class NumberedItemAdapter<T>(private var list: List<T>) :
         return view
     }
 
+    /**
+     * Function returning the name to show for a `T` item
+     * @param value item to retrieve the name for
+     */
     abstract fun getName(value: T): String?
 
+    /**
+     * Function returning the number for a `T` item
+     * @param value item to retrieve the number for
+     */
     abstract fun getNumber(value: T): Int
 }

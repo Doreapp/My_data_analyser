@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Activity Showing conversation information
+ */
 class ConversationActivity : AppCompatActivity() {
     private val TAG = "ConversationActivity"
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -32,6 +35,11 @@ class ConversationActivity : AppCompatActivity() {
         readIntent()
     }
 
+    /**
+     * Read the launcher intent
+     * Must contain extra [Constants.EXTRA_CONVERSATION_ID] with the id of the conversation
+     *
+     */
     private fun readIntent() {
         Debug.i(TAG, "readIntent")
         intent?.let { intent ->
@@ -43,6 +51,14 @@ class ConversationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Find a [Conversation] from a [ConversationData].
+     * Browse in files
+     *
+     * TODO do this in an async task
+     *
+     * @see MessagesParser
+     */
     private fun findConversation(conversationData: ConversationData) {
         this.conversationData = conversationData
         Debug.i(TAG, "findConversation. conversationData=$conversationData")
@@ -61,6 +77,9 @@ class ConversationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Update the display of the activity
+     */
     fun updateDisplay() {
         Debug.i(TAG, "updateDisplay.")
         conversationData?.let { data ->

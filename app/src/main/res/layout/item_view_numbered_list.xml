@@ -11,7 +11,7 @@
               android:id="@+id/tvName"
               android:text="Léandre Rocheteau"
               android:textSize="@dimen/normal"
-              android:textColor="@android:color/black"
+              android:textColor="@color/black"
               android:layout_gravity="start"/>
 
     <View android:layout_width="0dp"

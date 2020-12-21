@@ -10,4 +10,5 @@
     <string name="title_need_file_permission">File Access Permission</string>
     <string name="need_file_permission">We need your permission for reading your files</string>
     <string name="members">Members</string>
+    <string name="show_more">Show more</string>
 </resources>

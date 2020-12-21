@@ -105,12 +105,8 @@ class ConversationActivity : AppCompatActivity() {
                 }
             }
 
-            //TODO view that allow to show more and more items (starting at 4 only)
-            with(listMembers) {
-                for (position in 0 until adapter.count) {
-                    addView(adapter.getView(position, null, this))
-                }
-            }
+            listMembers.adapter = adapter
+            listMembers.isShowMoreButtonVisible = true
         }
 
     }

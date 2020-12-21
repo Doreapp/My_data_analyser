@@ -5,5 +5,5 @@ object Constants {
 
     const val REQUEST_CODE_PICK_FACEBOOK_FOLDER: Int = 2001
 
-
+    const val EXTRA_CONVERSATION_ID = "conversationId"
 }

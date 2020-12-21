@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         tools:context="com.mandin.antoine.mydataanalyser.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/btnChooseFacebookFolder"
+            tools:listitem="@layout/item_view_conversation"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     />
 
     <Button android:layout_width="wrap_content" android:layout_height="wrap_content"

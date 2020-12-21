@@ -5,10 +5,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.ImageAdapter
+import com.mandin.antoine.mydataanalyser.views.MarginDecoration
 import kotlinx.android.synthetic.main.activity_gallery.*
 
 
@@ -34,11 +34,13 @@ class GalleryActivity : AppCompatActivity() {
 
     fun showImageList(array: Array<DocumentFile>) {
         Debug.i(TAG, "show image list (${array.size})")
-        listImages.setHasFixedSize(true)
-        val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(applicationContext, 3)
-        listImages.layoutManager = layoutManager
+        with(listImages) {
+            setHasFixedSize(true)
+            addItemDecoration(MarginDecoration())
 
-        val adapter = ImageAdapter(array)
-        listImages.adapter = adapter
+            layoutManager = GridLayoutManager(applicationContext, 4)
+
+            adapter = ImageAdapter(array, 4)
+        }
     }
 }

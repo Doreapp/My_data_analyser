@@ -20,4 +20,6 @@ object Constants {
      * Extra name of the photo folder's uri
      */
     const val EXTRA_PHOTO_FOLDER_URI = "photoFolderUri"
+
+    const val THUMBNAIL_SIZE = 200
 }

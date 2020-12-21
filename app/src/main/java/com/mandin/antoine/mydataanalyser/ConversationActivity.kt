@@ -1,14 +1,16 @@
 package com.mandin.antoine.mydataanalyser
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
-import com.mandin.antoine.mydataanalyser.facebook.MessagesParser
+import com.mandin.antoine.mydataanalyser.facebook.Paths
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationStats
+import com.mandin.antoine.mydataanalyser.facebook.parsers.MessagesParser
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.NumberedItemAdapter
@@ -70,6 +72,14 @@ class ConversationActivity : AppCompatActivity() {
                         contentResolver.openInputStream(child.uri)?.let {
                             conversation = parser.readJson(it)
                         }
+                    }
+                }
+
+                folder.findFile(Paths.Messages.Folder.PHOTOS)?.let { photosFolder ->
+                    btnShowPhotos.setOnClickListener {
+                        val intent = Intent(this, GalleryActivity::class.java)
+                        intent.putExtra(Constants.EXTRA_PHOTO_FOLDER_URI, photosFolder.uri.toString())
+                        startActivity(intent)
                     }
                 }
             }

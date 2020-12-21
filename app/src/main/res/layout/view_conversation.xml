@@ -54,5 +54,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/listMembers"/>
 
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/show_photos"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:id="@+id/btnShowPhotos"/>
     </LinearLayout>
 </ScrollView>

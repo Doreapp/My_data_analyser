@@ -1,6 +1,7 @@
-package com.mandin.antoine.mydataanalyser.facebook
+package com.mandin.antoine.mydataanalyser.facebook.parsers
 
 import android.util.JsonReader
+import com.mandin.antoine.mydataanalyser.facebook.CharsetsUtils
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.Message

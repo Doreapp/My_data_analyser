@@ -53,13 +53,6 @@ class MainActivity : AppCompatActivity() {
             startPickFolderIntent(Constants.REQUEST_CODE_PICK_FACEBOOK_FOLDER)
         }
 
-        btnChooseFacebookFolder.setOnLongClickListener {
-            val intent = Intent(this, GalleryActivity::class.java)
-            startActivity(intent)
-
-            true
-        }
-
         loadDatabaseData()
     }
 

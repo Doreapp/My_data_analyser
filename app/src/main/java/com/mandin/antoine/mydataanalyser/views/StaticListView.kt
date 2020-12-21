@@ -78,6 +78,8 @@ class StaticListView(context: Context, attrs: AttributeSet? = null) :
     var adapter: Adapter? = null
         set(value) {
             field = value
+            if (value != null && shownItemsCount > value.count)
+                shownItemsCount = value.count
             removeItemViews()
             updateDisplay()
         }

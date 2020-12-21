@@ -187,6 +187,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Try to load the information stored in the database
+     *
+     * @see FacebookDbHelper
+     */
     fun loadDatabaseData() {
         val dialog = LoadingDialog(this)
         TaskRunner().executeAsync(
@@ -203,6 +208,11 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * Show a facebook data information
+     *
+     * Such as conversations list
+     */
     fun showFacebookData(facebookData: FacebookData) {
         Debug.i(TAG, "show facebook data : $facebookData")
 

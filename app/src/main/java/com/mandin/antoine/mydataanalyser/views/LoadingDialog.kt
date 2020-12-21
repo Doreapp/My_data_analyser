@@ -44,6 +44,9 @@ class LoadingDialog(context: Context) : Dialog(context) {
         progressBar = findViewById(R.id.progressBarHorizontal)
     }
 
+    /**
+     * Does the dialog show a progress bar
+     */
     var hasProgress: Boolean
         get() = progressBar.visibility == View.VISIBLE
         set(visible) {
@@ -53,6 +56,9 @@ class LoadingDialog(context: Context) : Dialog(context) {
                 progressBar.visibility = View.GONE
         }
 
+    /**
+     * The max progress of the dialog's progress bar
+     */
     var maxProgress: Int
         get() = progressBar.max
         set(value) {

@@ -60,6 +60,11 @@ class FacebookDbHelper(context: Context?) :
         onUpgrade(writableDatabase, 0, DATABASE_VERSION)
     }
 
+    /**
+     * find a conversation by its id
+     * @param id id of the conversation to search for
+     * @return a ConversationData
+     */
     fun findConversationById(id: Long): ConversationData? {
         val cursor = readableDatabase.rawQuery(
             "SELECT * FROM ${ConversationEntries.TABLE_NAME} " +

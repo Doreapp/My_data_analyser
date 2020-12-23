@@ -1,7 +1,8 @@
-package com.mandin.antoine.mydataanalyser.facebook
+package com.mandin.antoine.mydataanalyser.facebook.asynctasks
 
 import android.content.Context
 import androidx.documentfile.provider.DocumentFile
+import com.mandin.antoine.mydataanalyser.facebook.Paths
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData

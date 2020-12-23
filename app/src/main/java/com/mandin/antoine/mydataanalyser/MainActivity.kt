@@ -10,9 +10,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.mandin.antoine.mydataanalyser.facebook.ExploreFacebookTask
+import com.mandin.antoine.mydataanalyser.facebook.asynctasks.ExploreFacebookTask
+import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadDatabaseTask
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
-import com.mandin.antoine.mydataanalyser.facebook.database.LoadDatabaseTask
 import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants

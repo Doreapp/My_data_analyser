@@ -8,6 +8,11 @@ import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import java.util.*
 import java.util.concurrent.Callable
 
+/**
+ * Async task for loading photos from a folder.
+ *
+ * Browse a folder (specified with [uri]) and sort contained photos as [GalleryActivity.DatedImage]
+ */
 class LoadConversationPhotosTask(
     private val context: Context,
     private val uri: Uri,

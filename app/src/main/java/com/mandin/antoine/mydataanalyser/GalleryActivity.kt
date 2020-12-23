@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.GridLayoutManager
@@ -31,6 +32,10 @@ class GalleryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_gallery)
 
         readIntent()
+
+        ivFullscreen.setOnClickListener {
+            it.visibility = View.GONE
+        }
     }
 
     /**
@@ -79,9 +84,22 @@ class GalleryActivity : AppCompatActivity() {
 
             layoutManager = GridLayoutManager(applicationContext, 4)
 
-            adapter = ImageAdapter(array, 4)
+            adapter = ImageAdapter(array, 4,
+                object : ImageAdapter.ImageClickListener {
+                    override fun onImageClick(image: ImageAdapter.Image) {
+                        displayImageFullScreen(image)
+                    }
+                })
         }
     }
+
+    fun displayImageFullScreen(image: ImageAdapter.Image) {
+        with(ivFullscreen) {
+            visibility = View.VISIBLE
+            setImageBitmap(image.getPicture(context))
+        }
+    }
+
 
     /**
      * Class representing a dated image

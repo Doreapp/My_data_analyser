@@ -193,19 +193,22 @@ class MainActivity : AppCompatActivity() {
      * @see FacebookDbHelper
      */
     fun loadDatabaseData() {
-        val dialog = LoadingDialog(this)
-        TaskRunner().executeAsync(
-            LoadDatabaseTask(this, dialog.observer),
-            object : TaskRunner.Callback<FacebookData?> {
-                override fun onComplete(result: FacebookData?) {
-                    Debug.i(TAG, "load database data result : $result")
-                    result?.let { res ->
-                        showFacebookData(res)
+        with(LoadingDialog(this)) {
+            hasProgress = true
+
+            TaskRunner().executeAsync(
+                LoadDatabaseTask(this@MainActivity, observer),
+                object : TaskRunner.Callback<FacebookData?> {
+                    override fun onComplete(result: FacebookData?) {
+                        Debug.i(TAG, "load database data result : $result")
+                        result?.let { res ->
+                            showFacebookData(res)
+                        }
+                        dismiss()
                     }
-                    dialog.dismiss()
-                }
-            })
-        dialog.show()
+                })
+            show()
+        }
     }
 
     /**

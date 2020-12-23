@@ -17,7 +17,7 @@ class LoadDatabaseTask(
 
     override fun call(): FacebookData? {
         observer?.notify("Loading...")
-        val conversationBoxData = dbHelper.findConversationBoxData()
+        val conversationBoxData = dbHelper.findConversationBoxData(observer)
         dbHelper.close()
         conversationBoxData?.let {
             return FacebookData(conversationBoxData)

@@ -10,14 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mandin.antoine.mydataanalyser.facebook.PhotoDates
+import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationPhotosTask
+import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.ImageAdapter
+import com.mandin.antoine.mydataanalyser.views.LoadingDialog
 import com.mandin.antoine.mydataanalyser.views.MarginDecoration
 import kotlinx.android.synthetic.main.activity_gallery.*
 import java.util.*
 
-
+/**
+ * Activity for display a set of photos
+ */
 class GalleryActivity : AppCompatActivity() {
     private val TAG = "GalleryActivity"
 
@@ -28,29 +33,44 @@ class GalleryActivity : AppCompatActivity() {
         readIntent()
     }
 
+    /**
+     * Read the activity's launching intent
+     */
     private fun readIntent() {
         Debug.i(TAG, "read Intent")
         intent.extras?.getString(Constants.EXTRA_PHOTO_FOLDER_URI)?.let { uriDesc ->
             val uri = Uri.parse(uriDesc)
-            DocumentFile.fromTreeUri(this, uri)?.listFiles()?.let { children ->
-                showImageList(buildDatedImageList(children))
-            }
+            readPhotosAsync(uri)
         }
     }
 
-    private fun buildDatedImageList(array: Array<DocumentFile>): Array<DatedImage> {
-        val set = TreeSet<DatedImage>(kotlin.Comparator { o1, o2 ->
-            if (o1.date != null && o2.date != null)
-                o1.date.compareTo(o2.date)
-            else
-                0
-        })
-        for (file in array) {
-            set.add(DatedImage(file))
+    /**
+     * Launch the reading of photos in an async task
+     *
+     * @param uri the uri of the photo folder to read and display
+     * @see LoadConversationPhotosTask
+     */
+    private fun readPhotosAsync(uri: Uri) {
+        with(LoadingDialog(this)) {
+            hasProgress = true
+            TaskRunner().executeAsync(
+                LoadConversationPhotosTask(this@GalleryActivity, uri, observer),
+                object : TaskRunner.Callback<Array<DatedImage>> {
+                    override fun onComplete(result: Array<DatedImage>) {
+                        showImageList(result)
+                        dismiss()
+                    }
+                })
+
+            show()
         }
-        return set.toTypedArray()
     }
 
+    /**
+     * Display an image list
+     *
+     * @param array the array of [DatedImage] to display
+     */
     fun showImageList(array: Array<DatedImage>) {
         Debug.i(TAG, "show image list (${array.size})")
         with(listImages) {
@@ -63,10 +83,18 @@ class GalleryActivity : AppCompatActivity() {
         }
     }
 
-    inner class DatedImage(private val file: DocumentFile) : ImageAdapter.Image {
+    /**
+     * Class representing a dated image
+     */
+    class DatedImage(private val file: DocumentFile) : ImageAdapter.Image {
         val date = file.name?.let { PhotoDates.getFromName(it) }
         var thumbnail: Bitmap? = null
 
+        /**
+         * Return a thumbnail
+         *
+         * @see Constants.THUMBNAIL_SIZE
+         */
         override fun getThumbnail(context: Context): Bitmap? {
             if (thumbnail == null)
                 context.contentResolver.openInputStream(file.uri)?.let {
@@ -77,6 +105,9 @@ class GalleryActivity : AppCompatActivity() {
             return thumbnail
         }
 
+        /**
+         * Return the whole picture
+         */
         override fun getPicture(context: Context): Bitmap? {
             return context.contentResolver.openInputStream(file.uri)?.let {
                 BitmapFactory.decodeStream(it)

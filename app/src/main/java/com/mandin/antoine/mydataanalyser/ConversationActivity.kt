@@ -115,6 +115,19 @@ class ConversationActivity : AppCompatActivity() {
 
             listMembers.adapter = adapter
             listMembers.isShowMoreButtonVisible = true
+
+            Debug.i(
+                TAG, "stats on message par period : " +
+                        "\nper year : ${statistics.messageCountByYear.entries.toTypedArray().contentToString()} " +
+                        "\nper month : ${statistics.messageCountByMonth.entries.toTypedArray().contentToString()} " +
+                        "\nper week : ${statistics.messageCountByWeek.entries.toTypedArray().contentToString()} "
+            )
+
+            periodLineChart.messageCountByYear = statistics.messageCountByYear
+            periodLineChart.messageCountByMonth = statistics.messageCountByMonth
+            periodLineChart.messageCountByWeek = statistics.messageCountByWeek
+
+            periodLineChart.showMessageCountByMonth()
         }
     }
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spinnerPeriods">
+        <item>@string/yearly</item>
+        <item>@string/monthly</item>
+        <item>@string/weekly</item>
+        <item>@string/daily</item>
+    </string-array>
+</resources>

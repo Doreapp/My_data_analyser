@@ -127,7 +127,7 @@ class ConversationActivity : AppCompatActivity() {
             periodLineChart.messageCountByMonth = statistics.messageCountByMonth
             periodLineChart.messageCountByWeek = statistics.messageCountByWeek
 
-            periodLineChart.showMessageCountByMonth()
+            periodLineChart.showMessageCountByYear()
         }
     }
 

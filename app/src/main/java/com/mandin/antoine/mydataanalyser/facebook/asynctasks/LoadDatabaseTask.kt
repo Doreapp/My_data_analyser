@@ -1,6 +1,7 @@
-package com.mandin.antoine.mydataanalyser.facebook.database
+package com.mandin.antoine.mydataanalyser.facebook.asynctasks
 
 import android.content.Context
+import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import java.util.concurrent.Callable

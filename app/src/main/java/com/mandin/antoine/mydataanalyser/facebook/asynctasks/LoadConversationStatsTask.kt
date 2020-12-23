@@ -13,6 +13,9 @@ import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task for loading a conversation and its statistics
+ */
 class LoadConversationStatsTask(
     private val context: Context,
     private val dbHelper: FacebookDbHelper,
@@ -28,7 +31,7 @@ class LoadConversationStatsTask(
         dbHelper.findConversationById(conversationId)?.let {
             observer?.notifyProgress(searchConversationCost)
             result.conversationData = it
-            findConversation(it)
+            readConversation(it)
 
             result.conversation?.let { conversation ->
                 observer?.notify("Building statistics...")
@@ -39,8 +42,13 @@ class LoadConversationStatsTask(
         return result
     }
 
-    // TODO progress
-    private fun findConversation(conversationData: ConversationData) {
+    /**
+     * Read a conversation : browse messages and build stats
+     * @see Conversation
+     * @see ConversationStats
+     * @see MessagesParser
+     */
+    private fun readConversation(conversationData: ConversationData) {
         Debug.i(TAG, "findConversation() conversationData=$conversationData")
         observer?.notify("Listing messages...")
         conversationData.uri?.let { uri ->
@@ -70,6 +78,9 @@ class LoadConversationStatsTask(
         }
     }
 
+    /**
+     * Result of this task
+     */
     inner class Result(
         var conversationData: ConversationData? = null,
         var conversation: Conversation? = null,
@@ -79,6 +90,7 @@ class LoadConversationStatsTask(
 
     companion object {
         const val TAG = "LoadConversationStatsTask"
+
         const val searchConversationCost = 5
         const val listMessagesCost = 85
         const val findStatsCost = 10

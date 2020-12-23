@@ -51,26 +51,33 @@ class ConversationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Read the values of a conversation with and async tack
+     *
+     * @param id Id of the conversation to read
+     * @see LoadConversationStatsTask
+     */
     private fun readConversationValues(id: Long) {
         with(LoadingDialog(this)) {
             hasProgress = true
-            TaskRunner().executeAsync(LoadConversationStatsTask(
-                this@ConversationActivity, dbHelper,
-                id, observer
-            ), object : TaskRunner.Callback<LoadConversationStatsTask.Result> {
-                override fun onComplete(result: LoadConversationStatsTask.Result) {
-                    displayConversation(
-                        result.conversationData,
-                        result.conversation,
-                        result.conversationStats
-                    )
+            TaskRunner().executeAsync(
+                LoadConversationStatsTask(
+                    this@ConversationActivity, dbHelper,
+                    id, observer
+                ), object : TaskRunner.Callback<LoadConversationStatsTask.Result> {
+                    override fun onComplete(result: LoadConversationStatsTask.Result) {
+                        displayConversation(
+                            result.conversationData,
+                            result.conversation,
+                            result.conversationStats
+                        )
 
-                    result.photoFolderUri?.let { uri ->
-                        setPhotoFolderUri(uri)
+                        result.photoFolderUri?.let { uri ->
+                            setPhotoFolderUri(uri)
+                        }
+                        dismiss()
                     }
-                    dismiss()
-                }
-            })
+                })
 
             show()
         }
@@ -111,6 +118,11 @@ class ConversationActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Set the uri of the photo folder
+     *
+     * @param uri Uri of the folder
+     */
     fun setPhotoFolderUri(uri: Uri) {
         btnShowPhotos.setOnClickListener {
             val intent = Intent(this, GalleryActivity::class.java)

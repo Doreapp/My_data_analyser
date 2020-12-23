@@ -13,7 +13,6 @@
                 android:id="@+id/tvConversationTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Title"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
                 android:textSize="@dimen/h1"
@@ -25,8 +24,7 @@
                   android:layout_margin="@dimen/spaceSmall"
                   android:gravity="center"
                   android:layout_gravity="center_horizontal"
-                  android:textSize="@dimen/normal"
-                  android:text="123 567 messages sent\nStarted the 18/12/2016"/>
+                  android:textSize="@dimen/normal"/>
 
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                   android:text="@string/members"

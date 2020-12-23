@@ -10,6 +10,9 @@ import com.mandin.antoine.mydataanalyser.ConversationActivity
 import com.mandin.antoine.mydataanalyser.R
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
 import com.mandin.antoine.mydataanalyser.utils.Constants
+import com.mandin.antoine.mydataanalyser.utils.Utils
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Adapter used to display a list of conversations
@@ -19,6 +22,7 @@ import com.mandin.antoine.mydataanalyser.utils.Constants
  */
 class ConversationsAdapter(private var conversations: List<ConversationData>?) :
     RecyclerView.Adapter<ConversationsAdapter.ViewHolder>() {
+    private val dateFormatter = SimpleDateFormat("MMMM yyyy", Locale.ENGLISH)
 
     init {
         // Sort by message count descending
@@ -54,7 +58,8 @@ class ConversationsAdapter(private var conversations: List<ConversationData>?) :
         holder.tvTitle.text = conv?.title
 
         holder.tvStats.text =
-            "${conv?.messageCount} messages - Creating on ${conv?.creationDate}"
+            "${Utils.formatBigNumber(conv?.messageCount)} messages - " +
+                    "Created on ${dateFormatter.format(conv?.creationDate)}"
 
         holder.itemView.setOnClickListener { view ->
             val intent = Intent(view.context, ConversationActivity::class.java)

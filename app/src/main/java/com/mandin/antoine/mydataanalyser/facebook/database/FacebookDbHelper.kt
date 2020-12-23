@@ -11,6 +11,7 @@ import com.mandin.antoine.mydataanalyser.facebook.Persons
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
+import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.database.Names
 import java.util.*
@@ -105,15 +106,21 @@ class FacebookDbHelper(context: Context?) :
     /**
      * Read a the conversation box data
      */
-    fun findConversationBoxData(): ConversationBoxData? {
+    fun findConversationBoxData(observer: TaskObserver? = null): ConversationBoxData? {
         Debug.i(TAG, "findConversationBoxData")
         val cursor = readableDatabase.rawQuery(
             "SELECT * FROM ${ConversationEntries.TABLE_NAME}",
             null
         )
 
+        val readingProgressValue = 10
+
+        observer?.notify("Building conversations...")
+        observer?.setMaxProgress(cursor.count + readingProgressValue)
+
         val conversations = ArrayList<ConversationData>()
         with(cursor) {
+            var progress = 0
             if (moveToFirst()) {
                 do {
                     val id = getId(this)
@@ -139,6 +146,8 @@ class FacebookDbHelper(context: Context?) :
                             date
                         )
                     )
+                    progress++
+                    observer?.notifyProgress(readingProgressValue + progress)
                 } while (moveToNext())
             }
             close()

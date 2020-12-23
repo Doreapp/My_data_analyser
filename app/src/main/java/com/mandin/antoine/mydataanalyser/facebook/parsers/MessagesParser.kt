@@ -5,6 +5,7 @@ import com.mandin.antoine.mydataanalyser.facebook.CharsetsUtils
 import com.mandin.antoine.mydataanalyser.facebook.PhotoDates
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
+import com.mandin.antoine.mydataanalyser.facebook.model.Media
 import com.mandin.antoine.mydataanalyser.facebook.model.Message
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
 import java.io.IOException
@@ -59,6 +60,8 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
      */
     private val messages = ArrayList<Message>()
 
+    private val medias = ArrayList<Media>()
+
     /**
      * Read a `JSON` object matching the pattern of a Conversation
      * @param input Input stream of the JSON file
@@ -107,7 +110,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         }
         reader.endObject()
 
-        return Conversation(null, participants, messages, title, isStillParticipant)
+        return Conversation(null, participants, messages, medias, title, isStillParticipant)
     }
 
     /**
@@ -218,7 +221,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         var count = 0
         reader.beginArray()
         while (reader.hasNext()) {
-            readPhoto(reader)
+            medias.add(readPhoto(reader))
             count++
         }
         reader.endArray()
@@ -227,7 +230,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
     }
 
     @Throws(IOException::class)
-    fun readPhoto(reader: JsonReader) {
+    fun readPhoto(reader: JsonReader): Media {
         var uri: String? = null
         var creationTimestamp: Long? = null
 
@@ -247,6 +250,7 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) {
         if (uri != null && creationTimestamp != null) {
             PhotoDates.putFromUri(uri, creationTimestamp)
         }
+        return Media(uri, creationTimestamp?.let { Date(it) })
     }
 
     private fun getPerson(name: String?): Person? {

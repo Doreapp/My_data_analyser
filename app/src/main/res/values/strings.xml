@@ -12,4 +12,10 @@
     <string name="members">Members</string>
     <string name="show_more">Show more</string>
     <string name="show_photos">Show photos</string>
+
+    <!-- Periods -->
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="yearly">Yearly</string>
 </resources>

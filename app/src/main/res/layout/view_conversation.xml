@@ -59,5 +59,10 @@
                 android:text="@string/show_photos"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:id="@+id/btnShowPhotos"/>
+
+        <com.mandin.antoine.mydataanalyser.views.PeriodLineChart
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/periodLineChart"/>
     </LinearLayout>
 </ScrollView>

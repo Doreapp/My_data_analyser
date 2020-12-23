@@ -123,11 +123,11 @@ class ConversationActivity : AppCompatActivity() {
                         "\nper week : ${statistics.messageCountByWeek.entries.toTypedArray().contentToString()} "
             )
 
-            periodLineChart.messageCountByYear = statistics.messageCountByYear
-            periodLineChart.messageCountByMonth = statistics.messageCountByMonth
-            periodLineChart.messageCountByWeek = statistics.messageCountByWeek
+            periodLineChart.countsYearly = statistics.messageCountByYear
+            periodLineChart.countsMonthly = statistics.messageCountByMonth
+            periodLineChart.countsWeekly = statistics.messageCountByWeek
 
-            periodLineChart.showMessageCountByYear()
+            periodLineChart.showCountsYearly()
         }
     }
 

@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mandin.antoine.mydataanalyser.utils.Debug
 
 
-class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private val spanCount: Int = 3) :
+class ImageAdapter<I : ImageAdapter.Image>(
+    private var images: Array<I>,
+    private val spanCount: Int = 3,
+    private val imageClickListener: ImageClickListener? = null
+) :
     RecyclerView.Adapter<ImageAdapter<I>.ViewHolder>() {
     private var holderSize: Int? = null
 
@@ -19,8 +23,9 @@ class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private
             parent.context.display?.getRealMetrics(displayMetrics)
             holderSize = displayMetrics.widthPixels / spanCount
         }
-        val view = ImageView(parent.context)
-        return ViewHolder(view)
+        val holder = ViewHolder(ImageView(parent.context))
+        imageClickListener?.let { holder.setImageClickListener(it) }
+        return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,6 +37,7 @@ class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private
     }
 
     inner class ViewHolder(itemView: ImageView) : RecyclerView.ViewHolder(itemView) {
+        private var shownImage: Image? = null
 
         init {
             itemView.scaleType = ImageView.ScaleType.CENTER_CROP
@@ -42,8 +48,15 @@ class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private
         }
 
         fun showImage(image: Image) {
+            shownImage = image
             with(itemView as ImageView) {
                 setImageBitmap(image.getThumbnail(context))
+            }
+        }
+
+        fun setImageClickListener(imageClickListener: ImageClickListener) {
+            itemView.setOnClickListener {
+                shownImage?.let { image -> imageClickListener.onImageClick(image) }
             }
         }
     }
@@ -51,5 +64,9 @@ class ImageAdapter<I : ImageAdapter.Image>(private var images: Array<I>, private
     interface Image {
         fun getThumbnail(context: Context): Bitmap?
         fun getPicture(context: Context): Bitmap?
+    }
+
+    interface ImageClickListener {
+        fun onImageClick(image: Image)
     }
 }

@@ -26,4 +26,8 @@ object Paths {
         }
     }
 
+    object Posts {
+        const val PATH = "posts"
+        const val YOUR_POSTS_X = "your_posts_"
+    }
 }

@@ -10,10 +10,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.mandin.antoine.mydataanalyser.facebook.asynctasks.ExploreFacebookTask
+import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationsTask
 import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadDatabaseTask
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
-import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
@@ -173,11 +173,11 @@ class MainActivity : AppCompatActivity() {
             with(LoadingDialog(this)) {
                 hasProgress = true
                 TaskRunner().executeAsync(
-                    ExploreFacebookTask(doc, this@MainActivity, observer),
-                    object : TaskRunner.Callback<FacebookData?> {
-                        override fun onComplete(result: FacebookData?) {
+                    LoadConversationsTask(doc, this@MainActivity, observer),
+                    object : TaskRunner.Callback<ConversationBoxData?> {
+                        override fun onComplete(result: ConversationBoxData?) {
                             result?.let { res ->
-                                showFacebookData(res)
+                                showConversationData(res)
                             }
                             dismiss()
                         }
@@ -198,11 +198,11 @@ class MainActivity : AppCompatActivity() {
 
             TaskRunner().executeAsync(
                 LoadDatabaseTask(this@MainActivity, observer),
-                object : TaskRunner.Callback<FacebookData?> {
-                    override fun onComplete(result: FacebookData?) {
+                object : TaskRunner.Callback<ConversationBoxData?> {
+                    override fun onComplete(result: ConversationBoxData?) {
                         Debug.i(TAG, "load database data result : $result")
                         result?.let { res ->
-                            showFacebookData(res)
+                            showConversationData(res)
                         }
                         dismiss()
                     }
@@ -216,13 +216,13 @@ class MainActivity : AppCompatActivity() {
      *
      * Such as conversations list
      */
-    fun showFacebookData(facebookData: FacebookData) {
-        Debug.i(TAG, "show facebook data : $facebookData")
+    fun showConversationData(conversationBoxData: ConversationBoxData) {
+        Debug.i(TAG, "show conversationBoxData : $conversationBoxData")
 
-        Debug.i(TAG, "total message count : ${facebookData.conversationBoxData?.inbox?.size}")
+        Debug.i(TAG, "total message count : ${conversationBoxData.inbox?.size}")
 
         //recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ConversationsAdapter(facebookData.conversationBoxData?.inbox)
+        recyclerView.adapter = ConversationsAdapter(conversationBoxData.inbox)
     }
 
 }

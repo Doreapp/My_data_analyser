@@ -7,7 +7,6 @@ import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationData
-import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
 import com.mandin.antoine.mydataanalyser.facebook.parsers.MessagesParser
 import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
@@ -16,18 +15,18 @@ import java.util.concurrent.Callable
 /**
  * Async task to explore the facebook folder
  */
-class ExploreFacebookTask(
+class LoadConversationsTask(
     private val docFile: DocumentFile,
     private val context: Context,
     private val observer: TaskObserver?
-) : Callable<FacebookData?> {
-    private val TAG = "ExploreFacebookTask"
+) : Callable<ConversationBoxData?> {
+    private val TAG = "LoadConversationsTask"
     private val dbHelper = FacebookDbHelper(context)
 
     /**
      * Main function : Read files in the folder
      */
-    override fun call(): FacebookData {
+    override fun call(): ConversationBoxData? {
         Debug.i(TAG, "<call>")
         observer?.notify("Loading... [Clear database]")
         dbHelper.clear()
@@ -36,9 +35,7 @@ class ExploreFacebookTask(
             buildConversationBoxData(it)
         }
         dbHelper.close()
-        return FacebookData(
-            conversationBoxData
-        )
+        return conversationBoxData
     }
 
     /**
@@ -50,6 +47,7 @@ class ExploreFacebookTask(
         messagesFolder.findFile(Paths.Messages.INBOX)?.listFiles()?.let { folders ->
             var count = 0
             val length = folders.size
+            // Reset progress bar
             observer?.setMaxProgress(length)
             for (folder in folders) {
                 inboxConversations.add(buildConversationData(folder))

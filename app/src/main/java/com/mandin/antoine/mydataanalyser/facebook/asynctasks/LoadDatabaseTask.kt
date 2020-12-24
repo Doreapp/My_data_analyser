@@ -2,7 +2,7 @@ package com.mandin.antoine.mydataanalyser.facebook.asynctasks
 
 import android.content.Context
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
-import com.mandin.antoine.mydataanalyser.facebook.model.data.FacebookData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
 import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import java.util.concurrent.Callable
 
@@ -13,15 +13,15 @@ import java.util.concurrent.Callable
 class LoadDatabaseTask(
     context: Context,
     private val observer: TaskObserver?
-) : Callable<FacebookData?> {
+) : Callable<ConversationBoxData?> {
     private val dbHelper = FacebookDbHelper(context)
 
-    override fun call(): FacebookData? {
+    override fun call(): ConversationBoxData? {
         observer?.notify("Loading...")
         val conversationBoxData = dbHelper.findConversationBoxData(observer)
         dbHelper.close()
         conversationBoxData?.let {
-            return FacebookData(conversationBoxData)
+            return ConversationBoxData(conversationBoxData)
         }
         return null
     }

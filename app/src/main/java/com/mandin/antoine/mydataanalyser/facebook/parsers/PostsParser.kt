@@ -3,22 +3,23 @@ package com.mandin.antoine.mydataanalyser.facebook.parsers
 import android.util.JsonReader
 import com.mandin.antoine.mydataanalyser.facebook.model.Media
 import com.mandin.antoine.mydataanalyser.facebook.model.Post
+import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsData
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class PostsParser : Parser<List<Post>>() {
+class PostsParser : Parser<PostsData>() {
     private val posts = ArrayList<Post>()
 
     @Throws(IOException::class)
-    override fun readWhole(reader: JsonReader): List<Post> {
+    override fun readWhole(reader: JsonReader): PostsData {
         reader.beginArray()
         while (reader.hasNext()) {
             posts.add(readPost(reader))
         }
         reader.endArray()
 
-        return posts
+        return PostsData(posts)
     }
 
     @Throws(IOException::class)

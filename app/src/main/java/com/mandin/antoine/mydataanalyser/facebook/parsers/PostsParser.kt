@@ -9,6 +9,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class PostsParser : Parser<PostsData>() {
+    private val TAG = "PostsParser"
     private val posts = ArrayList<Post>()
 
     @Throws(IOException::class)
@@ -30,7 +31,6 @@ class PostsParser : Parser<PostsData>() {
         var medias = emptyList<Media>()
 
         reader.beginObject()
-
         while (reader.hasNext()) {
             when (reader.nextName()) {
                 "timestamp" -> {
@@ -50,6 +50,7 @@ class PostsParser : Parser<PostsData>() {
                 }
             }
         }
+        reader.endObject()
 
         return Post(content, date, where, medias)
     }
@@ -59,18 +60,20 @@ class PostsParser : Parser<PostsData>() {
         var content: String? = null
 
         reader.beginArray()
-        reader.beginObject()
         while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "post" -> {
-                    content = nextString(reader)
-                }
-                else -> {
-                    reader.skipValue()
+            reader.beginObject()
+            while (reader.hasNext()) {
+                when (reader.nextName()) {
+                    "post" -> {
+                        content = nextString(reader)
+                    }
+                    else -> {
+                        reader.skipValue()
+                    }
                 }
             }
+            reader.endObject()
         }
-        reader.endObject()
         reader.endArray()
 
         return content
@@ -100,20 +103,26 @@ class PostsParser : Parser<PostsData>() {
 
     @Throws(IOException::class)
     fun readPostAttachments(reader: JsonReader): List<Media> {
+        var result: List<Media> = emptyList()
+
         reader.beginArray()
-        reader.beginObject()
         while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "data" -> {
-                    return readMedias(reader)
-                }
-                else -> {
-                    reader.skipValue()
+            reader.beginObject()
+            while (reader.hasNext()) {
+                when (reader.nextName()) {
+                    "data" -> {
+                        result = readMedias(reader)
+                    }
+                    else -> {
+                        reader.skipValue()
+                    }
                 }
             }
+            reader.endObject()
         }
+        reader.endArray()
 
-        return emptyList()
+        return result
     }
 
     @Throws(IOException::class)
@@ -122,7 +131,7 @@ class PostsParser : Parser<PostsData>() {
 
         reader.beginArray()
         while (reader.hasNext()) {
-            mediaList.add(readMedia(reader))
+            readMedia(reader)?.let { mediaList.add(it) }
         }
         reader.endArray()
 
@@ -130,11 +139,12 @@ class PostsParser : Parser<PostsData>() {
     }
 
     @Throws(IOException::class)
-    fun readMedia(reader: JsonReader): Media {
+    fun readMedia(reader: JsonReader): Media? {
         var uri: String? = null
         var creationTimestamp: Date? = null
 
         reader.beginObject()
+        reader.nextName() // Must be "media"
         reader.beginObject()
         while (reader.hasNext()) {
             when (reader.nextName()) {
@@ -152,6 +162,10 @@ class PostsParser : Parser<PostsData>() {
         reader.endObject()
         reader.endObject()
 
+        if (uri == null || creationTimestamp == null) {
+            //Not a media (may be a link or a sailing)
+            return null
+        }
         return Media(uri, creationTimestamp)
     }
 

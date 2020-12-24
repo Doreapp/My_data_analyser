@@ -5,22 +5,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context="com.mandin.antoine.mydataanalyser.MainActivity">
+        tools:context="com.mandin.antoine.mydataanalyser.ConversationsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/btnChooseFacebookFolder"
             tools:listitem="@layout/item_view_conversation"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     />
 
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="Choose Facebook folder"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:enabled="false"
-            android:id="@+id/btnChooseFacebookFolder"/>
 
 </RelativeLayout>

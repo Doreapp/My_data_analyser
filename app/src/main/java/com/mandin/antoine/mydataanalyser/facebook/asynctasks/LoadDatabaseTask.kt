@@ -8,7 +8,7 @@ import java.util.concurrent.Callable
 
 
 /**
- * Async task used to read the database and retrieve facebook data
+ * Async task used to read the database and retrieve Conversations data
  */
 class LoadDatabaseTask(
     context: Context,
@@ -21,7 +21,7 @@ class LoadDatabaseTask(
         val conversationBoxData = dbHelper.findConversationBoxData(observer)
         dbHelper.close()
         conversationBoxData?.let {
-            return ConversationBoxData(conversationBoxData)
+            return it
         }
         return null
     }

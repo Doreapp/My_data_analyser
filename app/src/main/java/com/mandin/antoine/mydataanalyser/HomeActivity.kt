@@ -7,33 +7,20 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationsTask
-import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadDatabaseTask
-import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
-import com.mandin.antoine.mydataanalyser.facebook.model.data.ConversationBoxData
-import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
-import com.mandin.antoine.mydataanalyser.views.LoadingDialog
-import com.mandin.antoine.mydataanalyser.views.facebook.ConversationsAdapter
-import kotlinx.android.synthetic.main.activity_main.*
+import com.mandin.antoine.mydataanalyser.utils.Preferences
+import kotlinx.android.synthetic.main.activity_home.*
 
-
-class MainActivity : AppCompatActivity() {
-    val TAG: String = "MainActivity"
+class HomeActivity : BaseActivity() {
+    private val TAG = "HomeActivity"
     var readFilePermissionDialog: AlertDialog? = null
-    private var facebookDbHelper: FacebookDbHelper? = null
 
-    /**
-     * on activity create
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
-        Debug.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_home)
 
         when {
             ContextCompat.checkSelfPermission(
@@ -53,7 +40,17 @@ class MainActivity : AppCompatActivity() {
             startPickFolderIntent(Constants.REQUEST_CODE_PICK_FACEBOOK_FOLDER)
         }
 
-        loadDatabaseData()
+        btnShowConversations.setOnClickListener {
+            openActivity(ConversationsActivity::class.java)
+        }
+
+        btnShowPosts.setOnClickListener {
+            openActivity(PostsActivity::class.java)
+        }
+
+        Preferences.getFacebookFolderUri(this)?.let {
+            onFacebookFolderSavedInPreferences()
+        }
     }
 
     /**
@@ -132,11 +129,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        facebookDbHelper?.close()
-        super.onDestroy()
-    }
-
     /**
      * On *read external storage* permission granted
      * Enable the button
@@ -170,59 +162,20 @@ class MainActivity : AppCompatActivity() {
 
         val docFile = DocumentFile.fromTreeUri(this, uri)
         docFile?.let { doc ->
-            with(LoadingDialog(this)) {
-                hasProgress = true
-                TaskRunner().executeAsync(
-                    LoadConversationsTask(doc, this@MainActivity, observer),
-                    object : TaskRunner.Callback<ConversationBoxData?> {
-                        override fun onComplete(result: ConversationBoxData?) {
-                            result?.let { res ->
-                                showConversationData(res)
-                            }
-                            dismiss()
-                        }
-                    })
-                show()
-            }
+            Preferences.saveFacebookFolderUri(this, uri.toString())
+            onFacebookFolderSavedInPreferences()
         }
     }
 
-    /**
-     * Try to load the information stored in the database
-     *
-     * @see FacebookDbHelper
-     */
-    fun loadDatabaseData() {
-        with(LoadingDialog(this)) {
-            hasProgress = true
-
-            TaskRunner().executeAsync(
-                LoadDatabaseTask(this@MainActivity, observer),
-                object : TaskRunner.Callback<ConversationBoxData?> {
-                    override fun onComplete(result: ConversationBoxData?) {
-                        Debug.i(TAG, "load database data result : $result")
-                        result?.let { res ->
-                            showConversationData(res)
-                        }
-                        dismiss()
-                    }
-                })
-            show()
-        }
+    fun onFacebookFolderSavedInPreferences() {
+        Debug.i(TAG, "onFacebookFolderSavedInPreferences()")
+        btnShowConversations.isEnabled = true
+        btnShowPosts.isEnabled = true
     }
 
-    /**
-     * Show a facebook data information
-     *
-     * Such as conversations list
-     */
-    fun showConversationData(conversationBoxData: ConversationBoxData) {
-        Debug.i(TAG, "show conversationBoxData : $conversationBoxData")
-
-        Debug.i(TAG, "total message count : ${conversationBoxData.inbox?.size}")
-
-        //recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = ConversationsAdapter(conversationBoxData.inbox)
+    private fun openActivity(activity: Class<*>) {
+        Debug.i(TAG, "openActivity() activity=$activity")
+        val intent = Intent(this, activity)
+        startActivity(intent)
     }
-
 }

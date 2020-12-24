@@ -6,5 +6,5 @@ data class Post(
     val content: String?,
     val date: Date?,
     val where: String?,
-    val medias: List<Media>?
+    val medias: List<Media>
 )

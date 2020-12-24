@@ -7,6 +7,15 @@ This goal is to extract interesting information from your personnal data, that c
 ## Environement
 I use IntelliJ IDEA, but it also work with Android Studio
 
+Developpement is in **Kotlin**
+
+## Doing
+Folders/Files in analyse progress
+* messages 
+  * \[\*\] > Photos+Messages... 
+* posts 
+  * your_posts > Every posts + date
+
 ## TODOS
 
 Folders/files that I want to analyse:
@@ -23,5 +32,6 @@ Folders/files that I want to analyse:
   * groups.json > groups + number of interactions with
 * photos_and_videso
   * contains every albums + posted photos (with dates)
-* posts 
-  * your_posts > Contains every posts + date
+
+## Libraries 
+I use [MPAndroidChart](https://weeklycoding.com/mpandroidchart/) for displaying graphs ([Javadoc](https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/)).

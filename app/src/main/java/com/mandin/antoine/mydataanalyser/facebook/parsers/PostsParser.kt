@@ -8,10 +8,16 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Parser for facebook posts
+ */
 class PostsParser : Parser<PostsData>() {
     private val TAG = "PostsParser"
     private val posts = ArrayList<Post>()
 
+    /**
+     * Read the whole array of posts
+     */
     @Throws(IOException::class)
     override fun readWhole(reader: JsonReader): PostsData {
         reader.beginArray()
@@ -23,6 +29,9 @@ class PostsParser : Parser<PostsData>() {
         return PostsData(posts)
     }
 
+    /**
+     * Read a post
+     */
     @Throws(IOException::class)
     fun readPost(reader: JsonReader): Post {
         var content: String? = null
@@ -55,6 +64,9 @@ class PostsParser : Parser<PostsData>() {
         return Post(content, date, where, medias)
     }
 
+    /**
+     * Read post data (content)
+     */
     @Throws(IOException::class)
     fun readPostData(reader: JsonReader): String? {
         var content: String? = null
@@ -79,6 +91,9 @@ class PostsParser : Parser<PostsData>() {
         return content
     }
 
+    /**
+     * Read title and extract information "where" (the post was posted) from it
+     */
     @Throws(IOException::class)
     fun readWhereFromTitle(reader: JsonReader): String? {
         val title = nextString(reader)
@@ -101,6 +116,9 @@ class PostsParser : Parser<PostsData>() {
         return null
     }
 
+    /**
+     * Read post attachments (photos are handled only for now)
+     */
     @Throws(IOException::class)
     fun readPostAttachments(reader: JsonReader): List<Media> {
         var result: List<Media> = emptyList()
@@ -125,6 +143,9 @@ class PostsParser : Parser<PostsData>() {
         return result
     }
 
+    /**
+     * Read medias (photos only for now)
+     */
     @Throws(IOException::class)
     fun readMedias(reader: JsonReader): List<Media> {
         val mediaList = ArrayList<Media>()
@@ -138,6 +159,9 @@ class PostsParser : Parser<PostsData>() {
         return mediaList
     }
 
+    /**
+     * Read a media (photos only for now, else return null)
+     */
     @Throws(IOException::class)
     fun readMedia(reader: JsonReader): Media? {
         var uri: String? = null
@@ -169,6 +193,9 @@ class PostsParser : Parser<PostsData>() {
         return Media(uri, creationTimestamp)
     }
 
+    /**
+     * Substring [str] after [subStr] if contained, else returns null
+     */
     private fun substringAfter(str: String, subStr: String): String? {
         val index = str.indexOf(subStr)
         if (index >= 0)

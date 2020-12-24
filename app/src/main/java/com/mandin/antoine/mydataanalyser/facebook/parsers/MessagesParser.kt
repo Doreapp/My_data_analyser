@@ -199,6 +199,9 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) : Parser<Conversati
         return Message(null, person, date, content)
     }
 
+    /**
+     * Read a photo array
+     */
     @Throws(IOException::class)
     fun readPhotosArray(reader: JsonReader): Int {
         var count = 0
@@ -212,6 +215,11 @@ class MessagesParser(private val dbHelper: FacebookDbHelper) : Parser<Conversati
         return count
     }
 
+    /**
+     * Read a photo information
+     *
+     * @see Media
+     */
     @Throws(IOException::class)
     fun readPhoto(reader: JsonReader): Media {
         var uri: String? = null

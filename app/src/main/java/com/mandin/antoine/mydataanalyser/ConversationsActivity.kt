@@ -14,7 +14,9 @@ import com.mandin.antoine.mydataanalyser.views.LoadingDialog
 import com.mandin.antoine.mydataanalyser.views.facebook.ConversationsAdapter
 import kotlinx.android.synthetic.main.activity_conversations.*
 
-
+/**
+ * Activity to show conversations stats
+ */
 class ConversationsActivity : BaseActivity() {
     val TAG: String = "ConversationsActivity"
     private var facebookDbHelper: FacebookDbHelper? = null

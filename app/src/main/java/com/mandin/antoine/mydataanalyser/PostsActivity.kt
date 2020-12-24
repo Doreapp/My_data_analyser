@@ -10,6 +10,9 @@ import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
 
+/**
+ * Activity to show posts statistics
+ */
 class PostsActivity : BaseActivity() {
     private val TAG = "PostsActivity"
 
@@ -20,6 +23,9 @@ class PostsActivity : BaseActivity() {
         loadFromStorage()
     }
 
+    /**
+     * Show post data : TODO display
+     */
     fun showPostsData(postsData: PostsData) {
         Debug.i(TAG, "showPostsData (${postsData.posts.size} posts)")
     }

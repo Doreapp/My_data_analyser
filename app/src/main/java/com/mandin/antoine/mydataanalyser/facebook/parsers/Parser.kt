@@ -6,6 +6,11 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
 
+/**
+ * Abstract parser.
+ *
+ * Contains base method [readJson] and useful methods such as [nextString]
+ */
 abstract class Parser<T> {
     @Throws(IOException::class)
     fun readJson(input: InputStream): T {
@@ -17,7 +22,11 @@ abstract class Parser<T> {
 
     abstract fun readWhole(reader: JsonReader): T
 
-
+    /**
+     * Read next strinf from [reader] with the right encoding
+     *
+     * @see CharsetsUtils.translateIsoToUtf
+     */
     protected final fun nextString(reader: JsonReader): String {
         return CharsetsUtils.translateIsoToUtf(reader.nextString())
     }

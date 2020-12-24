@@ -7,7 +7,6 @@ import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mandin.antoine.mydataanalyser.facebook.PhotoDates
@@ -24,7 +23,7 @@ import java.util.*
 /**
  * Activity for display a set of photos
  */
-class GalleryActivity : AppCompatActivity() {
+class GalleryActivity : BaseActivity() {
     private val TAG = "GalleryActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {

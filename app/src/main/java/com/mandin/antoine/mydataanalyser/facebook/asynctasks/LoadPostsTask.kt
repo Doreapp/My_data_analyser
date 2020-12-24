@@ -9,6 +9,9 @@ import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task for loading posts data
+ */
 class LoadPostsTask(
     private val docFile: DocumentFile,
     private val context: Context,
@@ -25,6 +28,11 @@ class LoadPostsTask(
         return null
     }
 
+    /**
+     * Build posts from a list of files
+     *
+     * @see PostsParser
+     */
     private fun buildPostsData(files: Array<DocumentFile>): PostsData? {
         Debug.i(TAG, "buildPostsData (${files.size} files)")
         observer?.setMaxProgress(files.size)

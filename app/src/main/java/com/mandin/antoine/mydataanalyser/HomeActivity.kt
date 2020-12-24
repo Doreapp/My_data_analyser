@@ -14,6 +14,9 @@ import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import kotlinx.android.synthetic.main.activity_home.*
 
+/**
+ * Home activity, root of app navigation
+ */
 class HomeActivity : BaseActivity() {
     private val TAG = "HomeActivity"
     var readFilePermissionDialog: AlertDialog? = null
@@ -167,12 +170,22 @@ class HomeActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Called when the facebook folder is saved in [Preferences.PREF_FACEBOOK_FOLDER_URI]
+     *
+     * enable button to navigates
+     */
     fun onFacebookFolderSavedInPreferences() {
         Debug.i(TAG, "onFacebookFolderSavedInPreferences()")
         btnShowConversations.isEnabled = true
         btnShowPosts.isEnabled = true
     }
 
+    /**
+     * Start an activity
+     *
+     * @param activity The class of the activity to start
+     */
     private fun openActivity(activity: Class<*>) {
         Debug.i(TAG, "openActivity() activity=$activity")
         val intent = Intent(this, activity)

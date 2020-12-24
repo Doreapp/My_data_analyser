@@ -2,9 +2,12 @@ package com.mandin.antoine.mydataanalyser.utils
 
 import android.content.Context
 
+/**
+ * Util class to facilitate saves and gets in/from Shared preferences
+ */
 object Preferences {
     const val PREF_NAME = "preferences"
-    const val PREF_FACEBOOK_ZIP_PATH = "facebookZipPath"
+    const val PREF_FACEBOOK_FOLDER_URI = "facebookFolderUri"
 
     /**
      * Save the facebook folder uri into shared preferences
@@ -15,7 +18,7 @@ object Preferences {
     fun saveFacebookFolderUri(context: Context, uri: String) {
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
             .edit()
-            .putString(PREF_FACEBOOK_ZIP_PATH, uri)
+            .putString(PREF_FACEBOOK_FOLDER_URI, uri)
             .apply()
     }
 
@@ -26,7 +29,7 @@ object Preferences {
      */
     fun getFacebookFolderUri(context: Context): String? {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-            .getString(PREF_FACEBOOK_ZIP_PATH, null)
+            .getString(PREF_FACEBOOK_FOLDER_URI, null)
     }
 
 }

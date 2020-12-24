@@ -3,7 +3,6 @@ package com.mandin.antoine.mydataanalyser
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationStatsTask
 import com.mandin.antoine.mydataanalyser.facebook.database.FacebookDbHelper
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
@@ -23,7 +22,7 @@ import kotlin.collections.ArrayList
 /**
  * Activity Showing conversation information
  */
-class ConversationActivity : AppCompatActivity() {
+class ConversationActivity : BaseActivity() {
     private val TAG = "ConversationActivity"
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
     private val dbHelper = FacebookDbHelper(this)

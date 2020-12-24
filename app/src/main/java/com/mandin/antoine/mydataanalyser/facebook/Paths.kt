@@ -26,4 +26,11 @@ object Paths {
         }
     }
 
+    /**
+     * Paths to posts folder
+     */
+    object Posts {
+        const val PATH = "posts"
+        const val YOUR_POSTS_X = "your_posts_"
+    }
 }

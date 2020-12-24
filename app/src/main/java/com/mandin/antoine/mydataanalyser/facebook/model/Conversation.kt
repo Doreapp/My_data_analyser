@@ -6,6 +6,7 @@ data class Conversation(
     var id: Long?,
     var participants: HashSet<Person>,
     var messages: ArrayList<Message>,
+    var medias: ArrayList<Media>,
     var title: String?,
     var isStillParticipant: Boolean = false
 ) {
@@ -14,6 +15,7 @@ data class Conversation(
      */
     fun import(other: Conversation) {
         messages.addAll(other.messages)
+        medias.addAll(other.medias)
     }
 
     override fun equals(other: Any?): Boolean {

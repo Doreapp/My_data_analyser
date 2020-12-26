@@ -14,9 +14,9 @@ import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationPho
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
-import com.mandin.antoine.mydataanalyser.views.ImageAdapter
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
-import com.mandin.antoine.mydataanalyser.views.MarginDecoration
+import com.mandin.antoine.mydataanalyser.views.adapters.ImageAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.MarginDecoration
 import kotlinx.android.synthetic.main.activity_gallery.*
 import java.util.*
 

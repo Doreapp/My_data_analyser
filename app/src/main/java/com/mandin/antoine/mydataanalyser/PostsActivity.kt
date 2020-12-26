@@ -2,6 +2,7 @@ package com.mandin.antoine.mydataanalyser
 
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.documentfile.provider.DocumentFile
 import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadPostsTask
 import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsData
@@ -10,7 +11,8 @@ import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
-import com.mandin.antoine.mydataanalyser.views.NumberedItemAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.NumberedItemAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.PostsAdapter
 import kotlinx.android.synthetic.main.activity_posts.*
 
 /**
@@ -24,6 +26,10 @@ class PostsActivity : BaseActivity() {
         setContentView(R.layout.activity_posts)
 
         loadFromStorage()
+
+        btnBrowsePosts.setOnClickListener {
+            listPosts.visibility = View.VISIBLE
+        }
     }
 
     /**
@@ -33,6 +39,10 @@ class PostsActivity : BaseActivity() {
         Debug.i(TAG, "showPostsData (${postsData?.posts?.size} posts)")
         postsData?.let { data ->
             tvPostCount.text = "${data.posts.size} posts"
+            listPosts.adapter = PostsAdapter(data.posts.sortedBy {
+                it.date
+            })
+            btnBrowsePosts.isEnabled = true
         }
         postsStats?.let { stats ->
             // Chart showing the evolution of post number by periods
@@ -62,6 +72,7 @@ class PostsActivity : BaseActivity() {
 
             listWheres.adapter = adapter
             listWheres.isShowMoreButtonVisible = true
+
         }
     }
 
@@ -93,6 +104,14 @@ class PostsActivity : BaseActivity() {
             }
         } else {
             alert("You didn't specified the facebook folder location in your storage.")
+        }
+    }
+
+    override fun onBackPressed() {
+        if (listPosts.visibility == View.VISIBLE) {
+            listPosts.visibility = View.GONE
+        } else {
+            super.onBackPressed()
         }
     }
 }

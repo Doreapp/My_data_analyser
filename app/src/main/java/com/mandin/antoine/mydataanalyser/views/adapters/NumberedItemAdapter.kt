@@ -1,4 +1,4 @@
-package com.mandin.antoine.mydataanalyser.views
+package com.mandin.antoine.mydataanalyser.views.adapters
 
 import android.view.LayoutInflater
 import android.view.View

@@ -10,6 +10,7 @@ import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
+import com.mandin.antoine.mydataanalyser.views.NumberedItemAdapter
 import kotlinx.android.synthetic.main.activity_posts.*
 
 /**
@@ -34,6 +35,7 @@ class PostsActivity : BaseActivity() {
             tvPostCount.text = "${data.posts.size} posts"
         }
         postsStats?.let { stats ->
+            // Chart showing the evolution of post number by periods
             with(periodLineChart) {
                 countsWeekly = stats.postCountByWeek
                 countsMonthly = stats.postCountByMonth
@@ -41,7 +43,25 @@ class PostsActivity : BaseActivity() {
                 lineLabel = "Post count"
                 showCountsYearly()
             }
+            // Number of photos
             tvPhotoCount.text = "${stats.photoCount} photos"
+
+            // Where post were posted numbered list
+            val adapter = object : NumberedItemAdapter<MutableMap.MutableEntry<String, Int>>(
+                ArrayList(stats.whereCounts.entries)
+            ) {
+                override fun getName(value: MutableMap.MutableEntry<String, Int>): String {
+                    return value.key
+                }
+
+                override fun getNumber(value: MutableMap.MutableEntry<String, Int>): Int {
+                    return value.value
+                }
+            }
+            adapter.showPercentage = true
+
+            listWheres.adapter = adapter
+            listWheres.isShowMoreButtonVisible = true
         }
     }
 

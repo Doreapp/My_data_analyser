@@ -43,7 +43,7 @@ class PostsParser : Parser<PostsData>() {
         while (reader.hasNext()) {
             when (reader.nextName()) {
                 "timestamp" -> {
-                    date = Date(reader.nextLong())
+                    date = Date(reader.nextLong() * 1000L)
                 }
                 "data" -> {
                     content = readPostData(reader)

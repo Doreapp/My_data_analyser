@@ -125,6 +125,7 @@ class ConversationActivity : BaseActivity() {
             periodLineChart.countsYearly = statistics.messageCountByYear
             periodLineChart.countsMonthly = statistics.messageCountByMonth
             periodLineChart.countsWeekly = statistics.messageCountByWeek
+            periodLineChart.lineLabel = "message count"
 
             periodLineChart.showCountsYearly()
         }

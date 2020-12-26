@@ -32,6 +32,8 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
     var countsWeekly: Map<Date, Int>? = null
     var countsDaily: Map<Date, Int>? = null
 
+    var lineLabel = ""
+
     init {
         Debug.i(TAG, "<init>")
         LayoutInflater.from(context)
@@ -133,7 +135,7 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
                     entries.add(Entry(entry.key.time.toFloat(), entry.value.toFloat()))
                 }
 
-                val dataset = LineDataSet(entries, "Message count")
+                val dataset = LineDataSet(entries, lineLabel)
 
                 lineChart.data = LineData(dataset)
             }

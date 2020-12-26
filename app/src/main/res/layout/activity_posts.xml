@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
         tools:context=".PostsActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Posts"
+              android:textSize="@dimen/h1"
+              android:textColor="@color/colorPrimary"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/tvPostCount"
+              android:textColor="@color/colorAccent"
+              android:textSize="@dimen/large"/>
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/tvPhotoCount"
+              android:textColor="@color/colorAccent"
+              android:textSize="@dimen/large"/>
+
+    <com.mandin.antoine.mydataanalyser.views.PeriodLineChart
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/periodLineChart"/>
+
+</LinearLayout>

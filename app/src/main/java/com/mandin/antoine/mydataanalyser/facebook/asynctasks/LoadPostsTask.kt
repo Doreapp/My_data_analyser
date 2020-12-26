@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.mandin.antoine.mydataanalyser.facebook.Paths
 import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsStats
 import com.mandin.antoine.mydataanalyser.facebook.parsers.PostsParser
 import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
@@ -16,16 +17,20 @@ class LoadPostsTask(
     private val docFile: DocumentFile,
     private val context: Context,
     private val observer: TaskObserver?
-) : Callable<PostsData?> {
+) : Callable<LoadPostsTask.Result> {
     private val TAG = "LoadPostsTask"
+    private val result = Result()
 
-    override fun call(): PostsData? {
+    override fun call(): LoadPostsTask.Result {
         Debug.i(TAG, "<call>")
         observer?.notify("Loading... [Posts]")
         docFile.findFile(Paths.Posts.PATH)?.listFiles()?.let {
-            return buildPostsData(it)
+            buildPostsData(it)?.let { postsData ->
+                result.postsData = postsData
+                result.postsStats = buildPostsStats(postsData)
+            }
         }
-        return null
+        return result
     }
 
     /**
@@ -51,5 +56,15 @@ class LoadPostsTask(
         }
         return postsData
     }
+
+    private fun buildPostsStats(postsData: PostsData): PostsStats? {
+        observer?.notify("Building statistics...")
+        return PostsStats(postsData)
+    }
+
+    inner class Result(
+        var postsData: PostsData? = null,
+        var postsStats: PostsStats? = null
+    )
 
 }

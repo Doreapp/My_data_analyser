@@ -5,10 +5,12 @@ import android.os.Bundle
 import androidx.documentfile.provider.DocumentFile
 import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadPostsTask
 import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsStats
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
+import kotlinx.android.synthetic.main.activity_posts.*
 
 /**
  * Activity to show posts statistics
@@ -24,10 +26,23 @@ class PostsActivity : BaseActivity() {
     }
 
     /**
-     * Show post data : TODO display
+     * Show post data
      */
-    fun showPostsData(postsData: PostsData) {
-        Debug.i(TAG, "showPostsData (${postsData.posts.size} posts)")
+    fun displayData(postsData: PostsData?, postsStats: PostsStats?) {
+        Debug.i(TAG, "showPostsData (${postsData?.posts?.size} posts)")
+        postsData?.let { data ->
+            tvPostCount.text = "${data.posts.size} posts"
+        }
+        postsStats?.let { stats ->
+            with(periodLineChart) {
+                countsWeekly = stats.postCountByWeek
+                countsMonthly = stats.postCountByMonth
+                countsYearly = stats.postCountByYear
+                lineLabel = "Post count"
+                showCountsYearly()
+            }
+            tvPhotoCount.text = "${stats.photoCount} photos"
+        }
     }
 
     /**
@@ -45,11 +60,9 @@ class PostsActivity : BaseActivity() {
                     hasProgress = true
                     TaskRunner().executeAsync(
                         LoadPostsTask(docFile, this@PostsActivity, observer),
-                        object : TaskRunner.Callback<PostsData?> {
-                            override fun onComplete(result: PostsData?) {
-                                result?.let { res ->
-                                    showPostsData(res)
-                                }
+                        object : TaskRunner.Callback<LoadPostsTask.Result> {
+                            override fun onComplete(result: LoadPostsTask.Result) {
+                                displayData(result.postsData, result.postsStats)
                                 dismiss()
                             }
                         })

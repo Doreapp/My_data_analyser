@@ -13,7 +13,7 @@ import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
-import com.mandin.antoine.mydataanalyser.views.NumberedItemAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.NumberedItemAdapter
 import kotlinx.android.synthetic.main.view_conversation.*
 import java.text.SimpleDateFormat
 import java.util.*

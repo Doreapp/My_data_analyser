@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:padding="@dimen/spaceNormal"
+                android:layout_marginTop="@dimen/spaceNormal"
+                android:layout_height="wrap_content">
+
+    <ImageView android:layout_width="100dp"
+               android:layout_height="100dp"
+               android:id="@+id/iv1"
+               android:layout_marginHorizontal="@dimen/spaceSmall"
+               android:visibility="visible"/>
+
+    <ImageView android:layout_width="100dp"
+               android:layout_toEndOf="@id/iv1"
+               android:layout_marginHorizontal="@dimen/spaceSmall"
+               android:layout_height="100dp"
+               android:id="@+id/iv2"
+               android:visibility="gone"/>
+
+    <ImageView android:layout_width="100dp"
+               android:layout_marginHorizontal="@dimen/spaceSmall"
+               android:layout_toEndOf="@id/iv2"
+               android:layout_height="100dp"
+               android:id="@+id/iv3"
+               android:visibility="gone"/>
+
+    <!-- TODO Textview to see every photos if has more than 3 -->
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/tvContent"
+              android:textColor="@color/black"
+              android:textSize="@dimen/normal"
+              android:text="Whoua trop bien de pouvoir bla bla té"
+              android:layout_below="@id/iv1"
+              android:layout_margin="@dimen/spaceSmall"
+              android:layout_alignParentEnd="true"
+              android:layout_alignParentStart="true"
+    />
+
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Your profile"
+              android:id="@+id/tvWhere"
+              android:layout_alignParentEnd="true"
+              android:layout_alignTop="@id/tvDate"
+              android:layout_alignBottom="@id/tvDate"/>
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/tvDate"
+              android:layout_alignParentStart="true"
+              android:layout_toStartOf="@id/tvWhere"
+              android:layout_below="@id/tvContent"
+              android:text="00 Jan 0000"/>
+</RelativeLayout>

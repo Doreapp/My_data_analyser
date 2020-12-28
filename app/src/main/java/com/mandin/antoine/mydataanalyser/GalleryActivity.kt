@@ -11,6 +11,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mandin.antoine.mydataanalyser.facebook.PhotoDates
 import com.mandin.antoine.mydataanalyser.facebook.asynctasks.LoadConversationPhotosTask
+import com.mandin.antoine.mydataanalyser.tools.ImageTaskLoader
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
@@ -88,6 +89,10 @@ class GalleryActivity : BaseActivity() {
                     override fun onImageClick(image: ImageAdapter.Image) {
                         displayImageFullScreen(image)
                     }
+
+                    override fun onImageClick(uri: Uri) {
+                        displayImageFullScreen(uri)
+                    }
                 })
         }
     }
@@ -96,6 +101,24 @@ class GalleryActivity : BaseActivity() {
         with(ivFullscreen) {
             visibility = View.VISIBLE
             setImageBitmap(image.getPicture(context))
+        }
+    }
+
+    fun displayImageFullScreen(uri: Uri) {
+        with(ivFullscreen) {
+            visibility = View.VISIBLE
+            TaskRunner().executeAsync(
+                ImageTaskLoader(
+                    context,
+                    uri,
+                    isThumbnail = false
+                ),
+                object : TaskRunner.Callback<Bitmap?> {
+                    override fun onComplete(result: Bitmap?) {
+                        setImageBitmap(result)
+                    }
+                }
+            )
         }
     }
 
@@ -131,5 +154,9 @@ class GalleryActivity : BaseActivity() {
             }
         }
 
+        override fun getUri(context: Context): Uri? {
+            return file.uri
+        }
     }
+
 }

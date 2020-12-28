@@ -2,10 +2,14 @@ package com.mandin.antoine.mydataanalyser.views.adapters
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.util.DisplayMetrics
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.mandin.antoine.mydataanalyser.tools.ImageTaskLoader
+import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Debug
 
 
@@ -50,7 +54,25 @@ class ImageAdapter<I : ImageAdapter.Image>(
         fun showImage(image: Image) {
             shownImage = image
             with(itemView as ImageView) {
-                setImageBitmap(image.getThumbnail(context))
+                val uri: Uri? = image.getUri(context)
+                if (uri != null) {
+                    visibility = View.GONE
+                    TaskRunner().executeAsync(
+                        ImageTaskLoader(
+                            context,
+                            uri,
+                            isThumbnail = true
+                        ),
+                        object : TaskRunner.Callback<Bitmap?> {
+                            override fun onComplete(result: Bitmap?) {
+                                visibility = View.VISIBLE
+                                setImageBitmap(result)
+                            }
+                        }
+                    )
+                } else {
+                    setImageBitmap(image.getThumbnail(context))
+                }
             }
         }
 
@@ -64,9 +86,11 @@ class ImageAdapter<I : ImageAdapter.Image>(
     interface Image {
         fun getThumbnail(context: Context): Bitmap?
         fun getPicture(context: Context): Bitmap?
+        fun getUri(context: Context): Uri?
     }
 
     interface ImageClickListener {
         fun onImageClick(image: Image)
+        fun onImageClick(uri: Uri)
     }
 }

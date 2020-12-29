@@ -11,6 +11,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.mandin.antoine.mydataanalyser.R
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import kotlinx.android.synthetic.main.period_line_chart.view.*
@@ -27,10 +29,11 @@ import kotlin.collections.ArrayList
  */
 class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompat(context, attrs) {
     private val TAG = "PeriodLineChart"
-    var countsYearly: Map<Date, Int>? = null
-    var countsMonthly: Map<Date, Int>? = null
-    var countsWeekly: Map<Date, Int>? = null
-    var countsDaily: Map<Date, Int>? = null
+    var countsYearly: TreeMap<Date, Int>? = null
+    var countsMonthly: TreeMap<Date, Int>? = null
+    var countsWeekly: TreeMap<Date, Int>? = null
+    var countsDaily: TreeMap<Date, Int>? = null
+    private var intervals: List<Date>? = null
 
     var lineLabel = ""
 
@@ -74,6 +77,18 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
 
         with(lineChart) {
             description = null
+            setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                override fun onValueSelected(e: Entry?, h: Highlight?) {
+                    Debug.i(
+                        TAG, "onValueSelected : " +
+                                "x = ${DayValueFormatter().getFormattedValue(e!!.x)}, y = ${e.y}"
+                    )
+                }
+
+                override fun onNothingSelected() {
+
+                }
+            })
         }
     }
 
@@ -84,8 +99,12 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
      */
     fun showCountsYearly() {
         Debug.i(TAG, "showMessageCountByYear")
-        lineChart.xAxis.valueFormatter = YearValueFormatter
-        showEntries(countsYearly?.entries)
+        //showEntries(countsYearly?.entries)
+        when (countsYearly) {
+            null -> clearChart()
+            else -> showMap(countsYearly!!, getYearsIntervals(countsYearly!!.firstKey(), countsYearly!!.lastKey()))
+        }
+        lineChart.xAxis.valueFormatter = YearValueFormatter()
     }
 
     /**
@@ -95,8 +114,12 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
      */
     fun showCountsMonthly() {
         Debug.i(TAG, "showMessageCountByMonth")
-        lineChart.xAxis.valueFormatter = MonthValueFormatter
-        showEntries(countsMonthly?.entries)
+        //showEntries(countsMonthly?.entries)
+        when (countsMonthly) {
+            null -> clearChart()
+            else -> showMap(countsMonthly!!, getMonthsIntervals(countsMonthly!!.firstKey(), countsMonthly!!.lastKey()))
+        }
+        lineChart.xAxis.valueFormatter = MonthValueFormatter()
     }
 
     /**
@@ -106,8 +129,12 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
      */
     fun showCountsWeekly() {
         Debug.i(TAG, "showMessageCountByWeek")
-        lineChart.xAxis.valueFormatter = WeekValueFormatter
-        showEntries(countsWeekly?.entries)
+        //showEntries(countsWeekly?.entries)
+        when (countsWeekly) {
+            null -> clearChart()
+            else -> showMap(countsWeekly!!, getWeeksIntervals(countsWeekly!!.firstKey(), countsWeekly!!.lastKey()))
+        }
+        lineChart.xAxis.valueFormatter = WeekValueFormatter()
     }
 
     /**
@@ -117,8 +144,12 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
      */
     fun showCountsDaily() {
         Debug.i(TAG, "showMessageCountByDay")
-        lineChart.xAxis.valueFormatter = DayValueFormatter
-        showEntries(countsDaily?.entries)
+        //showEntries(countsDaily?.entries)
+        when (countsDaily) {
+            null -> clearChart()
+            else -> showMap(countsDaily!!, getDaysIntervals(countsDaily!!.firstKey(), countsDaily!!.lastKey()))
+        }
+        lineChart.xAxis.valueFormatter = DayValueFormatter()
     }
 
     /**
@@ -144,6 +175,35 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
     }
 
     /**
+     * Display map entries into the graph
+     * @param map The map containing data to display
+     * @param intervals intervals that must be displayed (may contains keys that aren't in [map] and may not contains every keys of [map] neither
+     *
+     */
+    private fun showMap(map: TreeMap<Date, Int>, intervals: List<Date>) {
+        Debug.i(TAG, "showMap (${map.size} entries)")
+        this.intervals = intervals
+        val entries = ArrayList<Entry>()
+
+        for ((index, interval) in intervals.withIndex()) {
+            var value = map[interval]
+            if (value == null) value = 0
+            entries.add(
+                Entry(
+                    index.toFloat(),
+                    value.toFloat()
+                )
+            )
+        }
+
+        val dataset = LineDataSet(entries, lineLabel)
+
+        lineChart.xAxis.granularity = 1f
+        lineChart.data = LineData(dataset)
+        lineChart.invalidate()
+    }
+
+    /**
      * Clear the graph : show an empty chart
      */
     fun clearChart() {
@@ -151,11 +211,117 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
     }
 
     /**
+     * Build yearly intervals.
+     * It's a list of dates, separated by one year
+     * @param first first Year date of the list
+     * @param last last Year date of the list
+     */
+    private fun getYearsIntervals(first: Date, last: Date): List<Date> {
+        val cal = Calendar.getInstance()
+        cal.time = last
+        val lastYear = cal.get(Calendar.YEAR)
+        cal.time = first
+        val firstYear = cal.get(Calendar.YEAR)
+
+        val result = ArrayList<Date>()
+        for (year in firstYear..lastYear) {
+            cal.set(Calendar.YEAR, year)
+            result.add(cal.time)
+        }
+        return result
+    }
+
+    /**
+     * Build monthly intervals.
+     * It's a list of dates, separated by one month
+     * @param first first month date of the list
+     * @param last last month date of the list
+     */
+    private fun getMonthsIntervals(first: Date, last: Date): List<Date> {
+        val cal = Calendar.getInstance()
+        cal.time = last
+        val lastMonth = cal.get(Calendar.YEAR) * 12 + cal.get(Calendar.MONTH)
+
+        cal.time = first
+        val firstMonth = cal.get(Calendar.YEAR) * 12 + cal.get(Calendar.MONTH)
+
+        val result = ArrayList<Date>()
+        for (month in firstMonth..lastMonth) {
+            cal.set(Calendar.YEAR, month / 12)
+            cal.set(Calendar.MONTH, month % 12)
+            result.add(cal.time)
+        }
+        return result
+    }
+
+    /**
+     * Build weekly intervals.
+     * It's a list of dates, separated by one week
+     * @param first first week date of the list
+     * @param last last week date of the list
+     */
+    private fun getWeeksIntervals(first: Date, last: Date): List<Date> {
+        val cal = Calendar.getInstance()
+        cal.time = last
+        val lastYear = cal.get(Calendar.YEAR)
+        val lastWeek = cal.get(Calendar.WEEK_OF_YEAR)
+
+        cal.time = first
+        val firstYear = cal.get(Calendar.YEAR)
+        val firstWeek = cal.get(Calendar.WEEK_OF_YEAR)
+
+        val result = ArrayList<Date>()
+        for (year in firstYear..lastYear) {
+            cal.set(Calendar.YEAR, year)
+            val minWeek = if (year == firstYear) firstWeek else cal.getActualMinimum(Calendar.WEEK_OF_YEAR)
+            val maxWeek = if (year == lastYear) lastWeek else cal.getActualMaximum(Calendar.WEEK_OF_YEAR)
+            for (week in minWeek..maxWeek) {
+                cal.set(Calendar.WEEK_OF_YEAR, week)
+                result.add(cal.time)
+            }
+        }
+        return result
+    }
+
+    /**
+     * Build daily intervals.
+     * It's a list of dates, separated by one day
+     * @param first first day date of the list
+     * @param last last day date of the list
+     */
+    private fun getDaysIntervals(first: Date, last: Date): List<Date> {
+        val cal = Calendar.getInstance()
+        cal.time = last
+        val lastYear = cal.get(Calendar.YEAR)
+        val lastDay = cal.get(Calendar.DAY_OF_YEAR)
+
+        cal.time = first
+        val firstYear = cal.get(Calendar.YEAR)
+        val firstDay = cal.get(Calendar.DAY_OF_YEAR)
+
+        val result = ArrayList<Date>()
+        for (year in firstYear..lastYear) {
+            cal.set(Calendar.YEAR, year)
+            val minDay = if (year == firstYear) firstDay else cal.getActualMinimum(Calendar.DAY_OF_YEAR)
+            val maxDay = if (year == lastYear) lastDay else cal.getActualMaximum(Calendar.DAY_OF_YEAR)
+            for (day in minDay..maxDay) {
+                cal.set(Calendar.DAY_OF_YEAR, day)
+                result.add(cal.time)
+            }
+        }
+        return result
+    }
+
+
+    /**
      * Formatter for X Axis : format a date into its year
      */
-    object YearValueFormatter : ValueFormatter() {
+    inner class YearValueFormatter : ValueFormatter() {
         private val dateFormatter = SimpleDateFormat("yyyy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
+            intervals?.let {
+                return dateFormatter.format(it[value.toInt()])
+            }
             return dateFormatter.format(Date(value.toLong()))
         }
     }
@@ -163,20 +329,25 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
     /**
      * Formatter for X Axis : format a date into its Month + year
      */
-    object MonthValueFormatter : ValueFormatter() {
+    inner class MonthValueFormatter : ValueFormatter() {
         private val dateFormatter = SimpleDateFormat("MMM yyyy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
+            intervals?.let {
+                return dateFormatter.format(it[value.toInt()])
+            }
             return dateFormatter.format(Date(value.toLong()))
         }
     }
 
-
     /**
      * Formatter for X Axis : format a date into its week + year
      */
-    object WeekValueFormatter : ValueFormatter() {
+    inner class WeekValueFormatter : ValueFormatter() {
         private val dateFormatter = SimpleDateFormat("'W'ww/yy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
+            intervals?.let {
+                return dateFormatter.format(it[value.toInt()])
+            }
             return dateFormatter.format(Date(value.toLong()))
         }
     }
@@ -184,10 +355,13 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
     /**
      * Formatter for X Axis : format a date into its day (day+month+year)
      */
-    object DayValueFormatter : ValueFormatter() {
+    inner class DayValueFormatter : ValueFormatter() {
         private val dateFormatter = SimpleDateFormat("dd/MM/yy", Locale.ENGLISH)
 
         override fun getFormattedValue(value: Float): String {
+            intervals?.let {
+                return dateFormatter.format(it[value.toInt()])
+            }
             return dateFormatter.format(Date(value.toLong()))
         }
     }

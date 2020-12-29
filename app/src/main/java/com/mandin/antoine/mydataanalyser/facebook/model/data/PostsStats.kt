@@ -21,20 +21,20 @@ class PostsStats(postsData: PostsData) {
             post.date?.let { date ->
                 with(Calendar.getInstance()) {
                     time = date
-                    set(Calendar.MILLISECOND, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MILLISECOND, 500)
+                    set(Calendar.SECOND, 30)
+                    set(Calendar.MINUTE, 30)
+                    set(Calendar.HOUR_OF_DAY, 12)
 
                     val savedDay = get(Calendar.DAY_OF_WEEK)
-                    set(Calendar.DAY_OF_WEEK, 1)
+                    set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
                     increment(postCountByWeek, time)
 
                     set(Calendar.DAY_OF_WEEK, savedDay)
-                    set(Calendar.DAY_OF_MONTH, 1)
+                    set(Calendar.DAY_OF_MONTH, 15)
                     increment(postCountByMonth, time)
 
-                    set(Calendar.MONTH, 0)
+                    set(Calendar.MONTH, 11)
                     increment(postCountByYear, time)
                 }
 

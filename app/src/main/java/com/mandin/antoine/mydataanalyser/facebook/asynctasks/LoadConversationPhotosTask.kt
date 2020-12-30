@@ -23,8 +23,8 @@ class LoadConversationPhotosTask(
     override fun call(): Array<GalleryActivity.DatedImage> {
         observer?.notify("Opening photos folder...")
         val set = TreeSet<GalleryActivity.DatedImage> { o1, o2 ->
-            if (o1.date != null && o2.date != null)
-                o1.date.compareTo(o2.date)
+            if (o1.getDate() != null && o2.getDate() != null)
+                o1.getDate()!!.compareTo(o2.getDate())
             else
                 0
         }

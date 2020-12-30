@@ -16,6 +16,7 @@ import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
+import com.mandin.antoine.mydataanalyser.views.adapters.DatedImageAdapter
 import com.mandin.antoine.mydataanalyser.views.adapters.ImageAdapter
 import com.mandin.antoine.mydataanalyser.views.adapters.MarginDecoration
 import kotlinx.android.synthetic.main.activity_gallery.*
@@ -84,7 +85,7 @@ class GalleryActivity : BaseActivity() {
 
             layoutManager = GridLayoutManager(applicationContext, 4)
 
-            adapter = ImageAdapter(array, 4,
+            adapter = DatedImageAdapter(array, 4,
                 object : ImageAdapter.ImageClickListener {
                     override fun onImageClick(image: ImageAdapter.Image) {
                         displayImageFullScreen(image)
@@ -97,6 +98,9 @@ class GalleryActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Display an image with a fullscreen in foreground
+     */
     fun displayImageFullScreen(image: ImageAdapter.Image) {
         with(ivFullscreen) {
             visibility = View.VISIBLE
@@ -104,6 +108,9 @@ class GalleryActivity : BaseActivity() {
         }
     }
 
+    /**
+     * Display an image with a fullscreen in foreground
+     */
     fun displayImageFullScreen(uri: Uri) {
         with(ivFullscreen) {
             visibility = View.VISIBLE
@@ -126,9 +133,13 @@ class GalleryActivity : BaseActivity() {
     /**
      * Class representing a dated image
      */
-    class DatedImage(private val file: DocumentFile) : ImageAdapter.Image {
-        val date = file.name?.let { PhotoDates.getFromName(it) }
+    class DatedImage(private val file: DocumentFile) : DatedImageAdapter.DatedImage {
+        private val date = file.name?.let { PhotoDates.getFromName(it) }
         var thumbnail: Bitmap? = null
+
+        override fun getDate(): Date? {
+            return date
+        }
 
         /**
          * Return a thumbnail
@@ -154,7 +165,10 @@ class GalleryActivity : BaseActivity() {
             }
         }
 
-        override fun getUri(context: Context): Uri? {
+        /**
+         * Return image's uri, if it exists
+         */
+        override fun getUri(context: Context): Uri {
             return file.uri
         }
     }

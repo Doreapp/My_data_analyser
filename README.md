@@ -23,15 +23,24 @@ Folders/Files in analyse progress
 Folders/files that I want to analyse:
 * events
   * your_event_responses.json > Contains joined+declined+interested events
+  * Display a chrat abouot number of joined events
+  * Allow browsing throught joined, declined and intrested events
 * friends
   * friends.json > name + date of add 
+  * Just need to display a chart showing the number of added friends
 * groups
   * your_posts....json > every posts (including photos) + comments in groups
   * your..membership....json > groups joined and left + dates
+  * Browse through groups, while showing the number of interactions
+  * Display details about posts in a group, and joining date
 * interactions
   * groups.json > groups + number of interactions with
+  * I don't know if it is useful... The information is also in "groups" folder
 * photos_and_videso
   * contains every albums + posted photos (with dates)
+  * ..?
+  
+ ### Spotify !
 
 ## Libraries 
 I use [MPAndroidChart](https://weeklycoding.com/mpandroidchart/) for displaying graphs ([Javadoc](https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/)).

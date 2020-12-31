@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
@@ -43,6 +42,10 @@ class HomeActivity : BaseActivity() {
             startPickFolderIntent(Constants.REQUEST_CODE_PICK_FACEBOOK_FOLDER)
         }
 
+        btnChooseSpotifyFolder.setOnClickListener {
+            startPickFolderIntent(Constants.REQUEST_CODE_PICK_SPOTIFY_FOLDER)
+        }
+
         btnShowConversations.setOnClickListener {
             openActivity(ConversationsActivity::class.java)
         }
@@ -55,8 +58,16 @@ class HomeActivity : BaseActivity() {
             openActivity(CommentsActivity::class.java)
         }
 
+        btnShowSpotify.setOnClickListener {
+            openActivity(SpotifyDataActivity::class.java)
+        }
+
         Preferences.getFacebookFolderUri(this)?.let {
             onFacebookFolderSavedInPreferences()
+        }
+
+        Preferences.getSpotifyFolderUri(this)?.let {
+            onSpotifyFolderSavedInPreferences()
         }
     }
 
@@ -126,9 +137,19 @@ class HomeActivity : BaseActivity() {
             Constants.REQUEST_CODE_PICK_FACEBOOK_FOLDER -> {
                 when (resultCode) {
                     RESULT_OK -> {
-                        Log.i(TAG, "file selected")
+                        Debug.i(TAG, "facebook folder selected")
                         data?.data?.let {
                             onFacebookFolderPicked(it)
+                        }
+                    }
+                }
+            }
+            Constants.REQUEST_CODE_PICK_SPOTIFY_FOLDER -> {
+                when (resultCode) {
+                    RESULT_OK -> {
+                        Debug.i(TAG, "spotify folder selected")
+                        data?.data?.let {
+                            onSpotifyFolderPicked(it)
                         }
                     }
                 }
@@ -145,6 +166,7 @@ class HomeActivity : BaseActivity() {
         Debug.i(TAG, "onReadFilePermissionGranted")
         readFilePermissionDialog?.dismiss()
         btnChooseFacebookFolder.isEnabled = true
+        btnChooseSpotifyFolder.isEnabled = true
     }
 
     /**
@@ -175,6 +197,20 @@ class HomeActivity : BaseActivity() {
     }
 
     /**
+     * Called when the user choose the folder corresponding to spotify data
+     * @param uri Uri corresponding to picked folder
+     */
+    fun onSpotifyFolderPicked(uri: Uri) {
+        Debug.i(TAG, "onSpotifyFolderPicked uri=$uri")
+
+        val docFile = DocumentFile.fromTreeUri(this, uri)
+        docFile?.let { doc ->
+            Preferences.saveSpotifyFolderUri(this, uri.toString())
+            onSpotifyFolderSavedInPreferences()
+        }
+    }
+
+    /**
      * Called when the facebook folder is saved in [Preferences.PREF_FACEBOOK_FOLDER_URI]
      *
      * enable button to navigates
@@ -184,6 +220,16 @@ class HomeActivity : BaseActivity() {
         btnShowConversations.isEnabled = true
         btnShowPosts.isEnabled = true
         btnShowComments.isEnabled = true
+    }
+
+    /**
+     * Called when the spotify folder is saved in [Preferences.PREF_FACEBOOK_FOLDER_URI]
+     *
+     * enable button to navigates
+     */
+    fun onSpotifyFolderSavedInPreferences() {
+        Debug.i(TAG, "onSpotifyFolderSavedInPreferences()")
+        btnShowSpotify.isEnabled = true
     }
 
     /**

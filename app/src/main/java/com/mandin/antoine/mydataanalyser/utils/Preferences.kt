@@ -8,6 +8,7 @@ import android.content.Context
 object Preferences {
     const val PREF_NAME = "preferences"
     const val PREF_FACEBOOK_FOLDER_URI = "facebookFolderUri"
+    const val PREF_SPOTIFY_FOLDER_URI = "spotifyFolderUri"
 
     /**
      * Save the facebook folder uri into shared preferences
@@ -32,4 +33,26 @@ object Preferences {
             .getString(PREF_FACEBOOK_FOLDER_URI, null)
     }
 
+    /**
+     * Save the spotify folder uri into shared preferences
+     *
+     * @param context context used to write
+     * @param uri uri of the spotify folder data
+     */
+    fun saveSpotifyFolderUri(context: Context, uri: String) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString(PREF_SPOTIFY_FOLDER_URI, uri)
+            .apply()
+    }
+
+    /**
+     * retrieve the spotify folder uri from shared preferences
+     *
+     * @param context context used to read files
+     */
+    fun getSpotifyFolderUri(context: Context): String? {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .getString(PREF_SPOTIFY_FOLDER_URI, null)
+    }
 }

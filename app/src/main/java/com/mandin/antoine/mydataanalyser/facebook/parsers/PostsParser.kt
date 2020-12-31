@@ -9,9 +9,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * Parser for facebook posts
+ * FacebookParser for facebook posts
  */
-class PostsParser : Parser<PostsData>() {
+class PostsParser : FacebookParser<PostsData>() {
     private val TAG = "PostsParser"
     private val posts = ArrayList<Post>()
 

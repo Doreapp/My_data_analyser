@@ -45,7 +45,7 @@ import kotlin.collections.HashSet
  * }
  * ```
  */
-class MessagesParser(private val dbHelper: FacebookDbHelper) : Parser<Conversation>() {
+class MessagesParser(private val dbHelper: FacebookDbHelper) : FacebookParser<Conversation>() {
 
     /**
      * `List` of persons participating into the conversation

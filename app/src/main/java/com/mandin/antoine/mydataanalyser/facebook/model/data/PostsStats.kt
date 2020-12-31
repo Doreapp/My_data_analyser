@@ -1,12 +1,13 @@
 package com.mandin.antoine.mydataanalyser.facebook.model.data
 
+import com.mandin.antoine.mydataanalyser.utils.Utils
 import java.util.*
 import kotlin.collections.HashMap
 
-class PostsStats(postsData: PostsData) {
-    val postCountByYear = TreeMap<Date, Int>(ConversationStats.classicDateComparator)
-    val postCountByMonth = TreeMap<Date, Int>(ConversationStats.classicDateComparator)
-    val postCountByWeek = TreeMap<Date, Int>(ConversationStats.classicDateComparator)
+class PostsStats(postsData: PostsData) : BaseStats() {
+    val postCountByYear = TreeMap<Date, Int>(Utils.ClassicDateComparator)
+    val postCountByMonth = TreeMap<Date, Int>(Utils.ClassicDateComparator)
+    val postCountByWeek = TreeMap<Date, Int>(Utils.ClassicDateComparator)
     val whereCounts = HashMap<String, Int>()
     var photoCount = 0
 
@@ -42,17 +43,4 @@ class PostsStats(postsData: PostsData) {
         }
     }
 
-    private fun increment(map: TreeMap<Date, Int>, date: Date) {
-        when (val value = map[date]) {
-            null -> map[date] = 1
-            else -> map[date] = value + 1
-        }
-    }
-
-    private fun increment(map: HashMap<String, Int>, str: String) {
-        when (val value = map[str]) {
-            null -> map[str] = 1
-            else -> map[str] = value + 1
-        }
-    }
 }

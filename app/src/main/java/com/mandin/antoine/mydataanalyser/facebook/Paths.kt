@@ -33,4 +33,11 @@ object Paths {
         const val PATH = "posts"
         const val YOUR_POSTS_X = "your_posts_"
     }
+
+    /**
+     * Paths to comments folder
+     */
+    object Comments {
+        const val PATH = "comments"
+    }
 }

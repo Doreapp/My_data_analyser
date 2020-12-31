@@ -51,6 +51,10 @@ class HomeActivity : BaseActivity() {
             openActivity(PostsActivity::class.java)
         }
 
+        btnShowComments.setOnClickListener {
+            openActivity(CommentsActivity::class.java)
+        }
+
         Preferences.getFacebookFolderUri(this)?.let {
             onFacebookFolderSavedInPreferences()
         }
@@ -179,6 +183,7 @@ class HomeActivity : BaseActivity() {
         Debug.i(TAG, "onFacebookFolderSavedInPreferences()")
         btnShowConversations.isEnabled = true
         btnShowPosts.isEnabled = true
+        btnShowComments.isEnabled = true
     }
 
     /**

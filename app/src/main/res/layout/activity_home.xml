@@ -28,4 +28,11 @@
             android:id="@+id/btnShowPosts"
             android:text="Facebook Posts"/>
 
+
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:id="@+id/btnShowComments"
+            android:text="Facebook Comments"/>
+
 </LinearLayout>

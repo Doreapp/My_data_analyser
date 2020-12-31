@@ -22,7 +22,7 @@ class CommentsParser : Parser<CommentsData>() {
                 else -> reader.skipValue()
             }
         }
-        reader.endArray()
+        reader.endObject()
         return CommentsData(comments)
     }
 
@@ -45,7 +45,7 @@ class CommentsParser : Parser<CommentsData>() {
         reader.beginObject()
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "timestamp" -> date = Date(reader.nextLong())
+                "timestamp" -> date = Date(reader.nextLong() * 1000)
                 "data" -> {
                     val data = readData(reader)
                     content = data["comment"]
@@ -87,7 +87,17 @@ class CommentsParser : Parser<CommentsData>() {
             return it.substring(0, it.length - 1)
         }
 
-        value = substringAfter(title, "a commenté")
+        value = substringAfter(title, "a commenté ")
+        value?.let {
+            return it.substring(0, it.length - 1)
+        }
+
+        value = substringAfter(title, "a répondu à ")
+        value?.let {
+            return it.substring(0, it.length - 1)
+        }
+
+        value = substringAfter(title, "a ajouté un commentaire sur ")
         value?.let {
             return it.substring(0, it.length - 1)
         }

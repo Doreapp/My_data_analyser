@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mandin.antoine.mydataanalyser.R
-import com.mandin.antoine.mydataanalyser.facebook.model.Post
+import com.mandin.antoine.mydataanalyser.facebook.model.Comment
 import com.mandin.antoine.mydataanalyser.tools.ImageTaskLoader
 import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Preferences
@@ -15,50 +15,56 @@ import kotlinx.android.synthetic.main.item_view_post_comment.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PostsAdapter(private val postList: List<Post>) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
+class CommentsAdapter(private val commentList: List<Comment>) :
+    RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_view_post_comment, parent, false)
-        return PostViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_view_post_comment, parent, false)
+        return CommentViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.update(postList[position])
+    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
+        holder.update(commentList[position])
     }
 
     override fun getItemCount(): Int {
-        return postList.size
+        return commentList.size
     }
 
 
-    class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
             if (facebookFolderPath == null)
                 facebookFolderPath = Preferences.getFacebookFolderUri(itemView.context)
         }
 
-        fun update(post: Post) {
-            if (post.content == null || post.content.isEmpty()) {
+        fun update(comment: Comment) {
+            if (comment.content == null || comment.content.isEmpty()) {
                 itemView.tvContent.visibility = View.GONE
             } else {
                 itemView.tvContent.visibility = View.VISIBLE
-                itemView.tvContent.text = post.content.trim()
+                itemView.tvContent.text = comment.content.trim()
             }
-            itemView.tvDate.text = dateFormatter.format(post.date)
-            itemView.tvWhere.text = post.where
+            itemView.tvDate.text = dateFormatter.format(comment.date)
+
+            var whereText = comment.where
+            comment.group?.let { whereText += "\n($it)" }
+            itemView.tvWhere.text = whereText
 
             itemView.iv1.visibility = View.GONE
             itemView.iv2.visibility = View.GONE
             itemView.iv3.visibility = View.GONE
 
             for (i in 0..2) {
-                if (i < post.medias.size && post.medias[i].uriFromRoot != null) {
+                val size = if (comment.medias == null) 0 else comment.medias.size
+                if (i < size && comment.medias!![i].uriFromRoot != null) {
                     TaskRunner().executeAsync(
                         ImageTaskLoader(
                             itemView.context,
                             Uri.parse(facebookFolderPath),
-                            post.medias[i].uriFromRoot,
+                            comment.medias[i].uriFromRoot,
                             isThumbnail = true
                         ),
                         object : TaskRunner.Callback<Bitmap?> {
@@ -78,7 +84,7 @@ class PostsAdapter(private val postList: List<Post>) : RecyclerView.Adapter<Post
                                     }
                                 }
                             }
-                        });
+                        })
                 }
             }
 

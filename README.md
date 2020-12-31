@@ -41,6 +41,16 @@ Folders/files that I want to analyse:
   * ..?
   
  ### Spotify !
+ * Evolution of stream counts
+ * Evolution of stream time
+ * Best artists (in stream time)
+   * Best artists of a period
+ * Best songs (in stream time)
+   * Best songs of a period
+ * Search data ?
+   * Evolution
+   * History 
+   * Bests ?
 
 ## Libraries 
 I use [MPAndroidChart](https://weeklycoding.com/mpandroidchart/) for displaying graphs ([Javadoc](https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/)).

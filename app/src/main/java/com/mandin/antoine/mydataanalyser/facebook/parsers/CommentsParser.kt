@@ -1,126 +1,106 @@
 package com.mandin.antoine.mydataanalyser.facebook.parsers
 
 import android.util.JsonReader
+import com.mandin.antoine.mydataanalyser.facebook.model.Comment
 import com.mandin.antoine.mydataanalyser.facebook.model.Media
-import com.mandin.antoine.mydataanalyser.facebook.model.Post
-import com.mandin.antoine.mydataanalyser.facebook.model.data.PostsData
+import com.mandin.antoine.mydataanalyser.facebook.model.data.CommentsData
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
-/**
- * Parser for facebook posts
- */
-class PostsParser : Parser<PostsData>() {
-    private val TAG = "PostsParser"
-    private val posts = ArrayList<Post>()
+class CommentsParser : Parser<CommentsData>() {
+    private val TAG = "CommentsParser"
+    private val comments = ArrayList<Comment>()
 
-    /**
-     * Read the whole array of posts
-     */
     @Throws(IOException::class)
-    override fun readWhole(reader: JsonReader): PostsData {
-        reader.beginArray()
+    override fun readWhole(reader: JsonReader): CommentsData {
+        reader.beginObject()
         while (reader.hasNext()) {
-            posts.add(readPost(reader))
+            when (reader.nextName()) {
+                "comments" -> readCommentsArray(reader)
+                else -> reader.skipValue()
+            }
         }
         reader.endArray()
-
-        return PostsData(posts)
+        return CommentsData(comments)
     }
 
-    /**
-     * Read a post
-     */
-    @Throws(IOException::class)
-    fun readPost(reader: JsonReader): Post {
-        var content: String? = null
+    fun readCommentsArray(reader: JsonReader): ArrayList<Comment> {
+        reader.beginArray()
+        while (reader.hasNext()) {
+            comments.add(readComment(reader))
+        }
+        reader.endArray()
+        return comments
+    }
+
+    fun readComment(reader: JsonReader): Comment {
         var date: Date? = null
+        var content: String? = null
+        var group: String? = null
         var where: String? = null
-        var medias = emptyList<Media>()
+        var medias: List<Media>? = null
 
         reader.beginObject()
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "timestamp" -> {
-                    date = Date(reader.nextLong() * 1000L)
-                }
+                "timestamp" -> date = Date(reader.nextLong())
                 "data" -> {
-                    content = readPostData(reader)
+                    val data = readData(reader)
+                    content = data["comment"]
+                    group = data["group"]
                 }
-                "title" -> {
-                    where = readWhereFromTitle(reader)
-                }
-                "attachments" -> {
-                    medias = readPostAttachments(reader)
-                }
-                else -> {
-                    reader.skipValue()
-                }
+                "title" -> where = readWhereFromTitle(reader)
+                "attachments" -> medias = readAttachments(reader)//TODO read the attachements (check post parser)
+                else -> reader.skipValue()
             }
         }
         reader.endObject()
-
-        return Post(content, date, where, medias)
+        return Comment(date, content, group, where, medias)
     }
 
-    /**
-     * Read post data (content)
-     */
-    @Throws(IOException::class)
-    fun readPostData(reader: JsonReader): String? {
-        var content: String? = null
-
+    fun readData(reader: JsonReader): Map<String, String> {
+        val result = HashMap<String, String>()
         reader.beginArray()
+        reader.beginObject()
+        reader.nextName()//"comment":
+        reader.beginObject()
         while (reader.hasNext()) {
-            reader.beginObject()
-            while (reader.hasNext()) {
-                when (reader.nextName()) {
-                    "post" -> {
-                        content = nextString(reader)
-                    }
-                    else -> {
-                        reader.skipValue()
-                    }
-                }
+            when (reader.nextName()) {
+                "comment" -> result["comment"] = nextString(reader)
+                "group" -> result["group"] = nextString(reader)
+                else -> reader.skipValue()
             }
-            reader.endObject()
         }
+        reader.endObject()
+        reader.endObject()
         reader.endArray()
-
-        return content
+        return result
     }
 
-    /**
-     * Read title and extract information "where" (the post was posted) from it
-     */
-    @Throws(IOException::class)
-    fun readWhereFromTitle(reader: JsonReader): String? {
+    fun readWhereFromTitle(reader: JsonReader): String {
         val title = nextString(reader)
 
-        var value = substringAfter(title, "a écrit sur le journal de ")
-        value?.let { return it.substring(0, it.length - 1) }
+        var value: String? = substringAfter(title, "a répondu au ")
+        value?.let {
+            return it.substring(0, it.length - 1)
+        }
 
-        value = substringAfter(title, "a actualisé son statut")
-        value?.let { return "<<Your Profile>>" }
+        value = substringAfter(title, "a commenté")
+        value?.let {
+            return it.substring(0, it.length - 1)
+        }
 
-        value = substringAfter(title, "a publié dans ")
-        value?.let { return it.substring(0, it.length - 1) }
-
-        value = substringAfter(title, "nouvelle photo dans le journal de ")
-        value?.let { return it.substring(0, it.length - 1) }
-
-        value = substringAfter(title, "nouvelles photos dans le journal de ")
-        value?.let { return it.substring(0, it.length - 1) }
-
-        return null
+        return title
     }
+
 
     /**
      * Read post attachments (photos are handled only for now)
      */
     @Throws(IOException::class)
-    fun readPostAttachments(reader: JsonReader): List<Media> {
+    fun readAttachments(reader: JsonReader): List<Media> {
         var result: List<Media> = emptyList()
 
         reader.beginArray()

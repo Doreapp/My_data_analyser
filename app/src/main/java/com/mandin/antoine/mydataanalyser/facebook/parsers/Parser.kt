@@ -30,4 +30,14 @@ abstract class Parser<T> {
     protected final fun nextString(reader: JsonReader): String {
         return CharsetsUtils.translateIsoToUtf(reader.nextString())
     }
+
+    /**
+     * Substring [str] after [subStr] if contained, else returns null
+     */
+    protected fun substringAfter(str: String, subStr: String): String? {
+        val index = str.indexOf(subStr)
+        if (index >= 0)
+            return str.substring(index + subStr.length)
+        return null
+    }
 }

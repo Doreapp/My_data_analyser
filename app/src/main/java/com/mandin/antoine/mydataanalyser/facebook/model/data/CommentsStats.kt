@@ -3,6 +3,9 @@ package com.mandin.antoine.mydataanalyser.facebook.model.data
 import com.mandin.antoine.mydataanalyser.utils.Utils
 import java.util.*
 
+/**
+ * Statistics about facebook comments
+ */
 class CommentsStats(data: CommentsData) : BaseStats() {
     val commentCountByYear = TreeMap<Date, Int>(Utils.ClassicDateComparator)
     val commentCountByMonth = TreeMap<Date, Int>(Utils.ClassicDateComparator)

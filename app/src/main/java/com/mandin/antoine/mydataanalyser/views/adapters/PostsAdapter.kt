@@ -15,6 +15,9 @@ import kotlinx.android.synthetic.main.item_view_post_comment.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Adapter for browsing post one by one
+ */
 class PostsAdapter(private val postList: List<Post>) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -30,7 +33,9 @@ class PostsAdapter(private val postList: List<Post>) : RecyclerView.Adapter<Post
         return postList.size
     }
 
-
+    /**
+     * Post view holder
+     */
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
@@ -38,6 +43,9 @@ class PostsAdapter(private val postList: List<Post>) : RecyclerView.Adapter<Post
                 facebookFolderPath = Preferences.getFacebookFolderUri(itemView.context)
         }
 
+        /**
+         * Show post information
+         */
         fun update(post: Post) {
             if (post.content == null || post.content.isEmpty()) {
                 itemView.tvContent.visibility = View.GONE

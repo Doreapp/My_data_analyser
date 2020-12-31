@@ -24,6 +24,9 @@ object Utils {
         return "$value"
     }
 
+    /**
+     * Date comparator, sorting dates ascending
+     */
     object ClassicDateComparator : Comparator<Date> {
         override fun compare(o1: Date?, o2: Date?): Int {
             if (o1 == null || o2 == null)

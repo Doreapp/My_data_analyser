@@ -26,6 +26,9 @@ class CommentsParser : Parser<CommentsData>() {
         return CommentsData(comments)
     }
 
+    /**
+     * Read the comments array
+     */
     fun readCommentsArray(reader: JsonReader): ArrayList<Comment> {
         reader.beginArray()
         while (reader.hasNext()) {
@@ -35,6 +38,9 @@ class CommentsParser : Parser<CommentsData>() {
         return comments
     }
 
+    /**
+     * Read a comment value
+     */
     fun readComment(reader: JsonReader): Comment {
         var date: Date? = null
         var content: String? = null
@@ -60,6 +66,9 @@ class CommentsParser : Parser<CommentsData>() {
         return Comment(date, content, group, where, medias)
     }
 
+    /**
+     * read "data" attribute : contains values such as the content and the group
+     */
     fun readData(reader: JsonReader): Map<String, String> {
         val result = HashMap<String, String>()
         reader.beginArray()
@@ -79,6 +88,9 @@ class CommentsParser : Parser<CommentsData>() {
         return result
     }
 
+    /**
+     * Read the title and extract the "where" value from it
+     */
     fun readWhereFromTitle(reader: JsonReader): String {
         val title = nextString(reader)
 
@@ -107,7 +119,7 @@ class CommentsParser : Parser<CommentsData>() {
 
 
     /**
-     * Read post attachments (photos are handled only for now)
+     * Read comments attachments (photos are handled only for now)
      */
     @Throws(IOException::class)
     fun readAttachments(reader: JsonReader): List<Media> {

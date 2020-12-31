@@ -15,6 +15,9 @@ import kotlinx.android.synthetic.main.item_view_post_comment.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Adapter to browse comments one by one
+ */
 class CommentsAdapter(private val commentList: List<Comment>) :
     RecyclerView.Adapter<CommentsAdapter.CommentViewHolder>() {
 
@@ -32,7 +35,9 @@ class CommentsAdapter(private val commentList: List<Comment>) :
         return commentList.size
     }
 
-
+    /**
+     * Comment view holder
+     */
     class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
@@ -40,6 +45,9 @@ class CommentsAdapter(private val commentList: List<Comment>) :
                 facebookFolderPath = Preferences.getFacebookFolderUri(itemView.context)
         }
 
+        /**
+         * Display [comment] information
+         */
         fun update(comment: Comment) {
             if (comment.content == null || comment.content.isEmpty()) {
                 itemView.tvContent.visibility = View.GONE

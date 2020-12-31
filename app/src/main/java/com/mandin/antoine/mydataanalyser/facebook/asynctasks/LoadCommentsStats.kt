@@ -11,6 +11,9 @@ import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task to load facebook comments and stats about those
+ */
 class LoadCommentsStats(
     private val docFile: DocumentFile,
     private val context: Context,
@@ -59,6 +62,9 @@ class LoadCommentsStats(
         return CommentsStats(commentsData)
     }
 
+    /**
+     * Result value, containing [CommentsData] and [CommentsStats]
+     */
     inner class Result(
         var commentsData: CommentsData? = null,
         var commentsStats: CommentsStats? = null

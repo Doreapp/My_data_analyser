@@ -15,6 +15,9 @@ import com.mandin.antoine.mydataanalyser.views.adapters.CommentsAdapter
 import com.mandin.antoine.mydataanalyser.views.adapters.NumberedItemAdapter
 import kotlinx.android.synthetic.main.activity_comments.*
 
+/**
+ * Activity to display data and stats about facebook comments
+ */
 class CommentsActivity : BaseActivity() {
     private val TAG = "CommentsActivity"
 

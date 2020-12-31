@@ -15,12 +15,12 @@ Folders/Files in analyse progress
   * \[\*\] > Photos+Messages... 
 * posts 
   * your_posts > Every posts + date
+* comments
+  * comments.json > Contains every comments that I posted
 
 ## TODOS
 
 Folders/files that I want to analyse:
-* comments
-  * comments.json > Contains every comments that I posted
 * events
   * your_event_responses.json > Contains joined+declined+interested events
 * friends

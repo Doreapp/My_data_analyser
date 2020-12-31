@@ -1,5 +1,7 @@
 package com.mandin.antoine.mydataanalyser.utils
 
+import java.util.*
+
 
 object Utils {
     const val ZIP_CONTENT_TYPE = "application/zip"
@@ -20,5 +22,14 @@ object Utils {
         if (value > 1000)
             return "" + (value / 10 + 5) / 10 / 10f + "K"
         return "$value"
+    }
+
+    object ClassicDateComparator : Comparator<Date> {
+        override fun compare(o1: Date?, o2: Date?): Int {
+            if (o1 == null || o2 == null)
+                return 0
+            return o1.compareTo(o2)
+        }
+
     }
 }

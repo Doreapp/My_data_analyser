@@ -105,6 +105,7 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
             else -> showMap(countsYearly!!, getYearsIntervals(countsYearly!!.firstKey(), countsYearly!!.lastKey()))
         }
         lineChart.xAxis.valueFormatter = YearValueFormatter()
+        lineChart.invalidate()
     }
 
     /**
@@ -120,6 +121,7 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
             else -> showMap(countsMonthly!!, getMonthsIntervals(countsMonthly!!.firstKey(), countsMonthly!!.lastKey()))
         }
         lineChart.xAxis.valueFormatter = MonthValueFormatter()
+        lineChart.invalidate()
     }
 
     /**
@@ -135,6 +137,7 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
             else -> showMap(countsWeekly!!, getWeeksIntervals(countsWeekly!!.firstKey(), countsWeekly!!.lastKey()))
         }
         lineChart.xAxis.valueFormatter = WeekValueFormatter()
+        lineChart.invalidate()
     }
 
     /**
@@ -150,6 +153,7 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
             else -> showMap(countsDaily!!, getDaysIntervals(countsDaily!!.firstKey(), countsDaily!!.lastKey()))
         }
         lineChart.xAxis.valueFormatter = DayValueFormatter()
+        lineChart.invalidate()
     }
 
     /**
@@ -200,7 +204,6 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
 
         lineChart.xAxis.granularity = 1f
         lineChart.data = LineData(dataset)
-        lineChart.invalidate()
     }
 
     /**
@@ -320,6 +323,9 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
         private val dateFormatter = SimpleDateFormat("yyyy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
             intervals?.let {
+                if (value < 0 || value >= it.size) {
+                    return "??"
+                }
                 return dateFormatter.format(it[value.toInt()])
             }
             return dateFormatter.format(Date(value.toLong()))
@@ -333,6 +339,9 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
         private val dateFormatter = SimpleDateFormat("MMM yyyy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
             intervals?.let {
+                if (value < 0 || value >= it.size) {
+                    return "??"
+                }
                 return dateFormatter.format(it[value.toInt()])
             }
             return dateFormatter.format(Date(value.toLong()))
@@ -346,6 +355,9 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
         private val dateFormatter = SimpleDateFormat("'W'ww/yy", Locale.ENGLISH)
         override fun getFormattedValue(value: Float): String {
             intervals?.let {
+                if (value < 0 || value >= it.size) {
+                    return "??"
+                }
                 return dateFormatter.format(it[value.toInt()])
             }
             return dateFormatter.format(Date(value.toLong()))
@@ -360,6 +372,9 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
 
         override fun getFormattedValue(value: Float): String {
             intervals?.let {
+                if (value < 0 || value >= it.size) {
+                    return "??"
+                }
                 return dateFormatter.format(it[value.toInt()])
             }
             return dateFormatter.format(Date(value.toLong()))

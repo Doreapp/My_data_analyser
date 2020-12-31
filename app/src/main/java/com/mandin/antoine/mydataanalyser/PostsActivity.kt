@@ -77,7 +77,7 @@ class PostsActivity : BaseActivity() {
     }
 
     /**
-     * Load conversations data from the storage
+     * Load posts data from the storage
      *
      * @see Preferences.getFacebookFolderUri
      */

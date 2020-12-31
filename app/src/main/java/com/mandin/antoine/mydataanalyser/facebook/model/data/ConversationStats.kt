@@ -2,17 +2,18 @@ package com.mandin.antoine.mydataanalyser.facebook.model.data
 
 import com.mandin.antoine.mydataanalyser.facebook.model.Conversation
 import com.mandin.antoine.mydataanalyser.facebook.model.Person
+import com.mandin.antoine.mydataanalyser.utils.Utils
 import java.util.*
 import kotlin.collections.HashMap
 
 /**
  * Class storing useful stats upon a conversation, for displaying
  */
-class ConversationStats(conversation: Conversation) {
+class ConversationStats(conversation: Conversation) : BaseStats() {
     val participantsMessageCount = HashMap<Person, Int>()
-    val messageCountByYear = TreeMap<Date, Int>(classicDateComparator)
-    val messageCountByMonth = TreeMap<Date, Int>(classicDateComparator)
-    val messageCountByWeek = TreeMap<Date, Int>(classicDateComparator)
+    val messageCountByYear = TreeMap<Date, Int>(Utils.ClassicDateComparator)
+    val messageCountByMonth = TreeMap<Date, Int>(Utils.ClassicDateComparator)
+    val messageCountByWeek = TreeMap<Date, Int>(Utils.ClassicDateComparator)
 
     init {
         for (message in conversation.messages) {
@@ -46,21 +47,5 @@ class ConversationStats(conversation: Conversation) {
 
             }
         }
-    }
-
-    private fun increment(map: TreeMap<Date, Int>, date: Date) {
-        when (val value = map[date]) {
-            null -> map[date] = 1
-            else -> map[date] = value + 1
-        }
-    }
-
-    object classicDateComparator : Comparator<Date> {
-        override fun compare(o1: Date?, o2: Date?): Int {
-            if (o1 == null || o2 == null)
-                return 0
-            return o1.compareTo(o2)
-        }
-
     }
 }

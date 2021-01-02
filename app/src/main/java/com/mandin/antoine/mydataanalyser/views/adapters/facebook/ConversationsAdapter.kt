@@ -1,4 +1,4 @@
-package com.mandin.antoine.mydataanalyser.views.facebook
+package com.mandin.antoine.mydataanalyser.views.adapters.facebook
 
 import android.content.Intent
 import android.view.LayoutInflater

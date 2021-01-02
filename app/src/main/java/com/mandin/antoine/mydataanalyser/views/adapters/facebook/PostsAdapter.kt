@@ -1,4 +1,4 @@
-package com.mandin.antoine.mydataanalyser.views.adapters
+package com.mandin.antoine.mydataanalyser.views.adapters.facebook
 
 import android.graphics.Bitmap
 import android.net.Uri

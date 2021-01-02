@@ -31,7 +31,7 @@
                       android:textColor="@color/colorAccent"
                       android:textSize="@dimen/large"/>
 
-            <com.mandin.antoine.mydataanalyser.views.PeriodLineChart
+            <com.mandin.antoine.mydataanalyser.views.PeriodCountsLineChart
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/periodLineChart"/>

@@ -11,8 +11,6 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.mandin.antoine.mydataanalyser.R
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import kotlinx.android.synthetic.main.period_line_chart.view.*
@@ -21,18 +19,19 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 /**
- * View of a Line Chart (Graph) of the evolution of something throw the time
+ * View of a Line Chart (Graph) of the evolution of something ([T]) throw the time
  * Propose several intervals of times (daily, weekly, monthly or yearly)
  *
  * @see R.layout.period_line_chart
  * @see R.array.spinnerPeriods
  */
-class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompat(context, attrs) {
+abstract class PeriodLineChart<T : Number>(context: Context, attrs: AttributeSet) :
+    LinearLayoutCompat(context, attrs) {
     private val TAG = "PeriodLineChart"
-    var countsYearly: TreeMap<Date, Int>? = null
-    var countsMonthly: TreeMap<Date, Int>? = null
-    var countsWeekly: TreeMap<Date, Int>? = null
-    var countsDaily: TreeMap<Date, Int>? = null
+    var countsYearly: TreeMap<Date, T>? = null
+    var countsMonthly: TreeMap<Date, T>? = null
+    var countsWeekly: TreeMap<Date, T>? = null
+    var countsDaily: TreeMap<Date, T>? = null
     private var intervals: List<Date>? = null
 
     var lineLabel = ""
@@ -77,18 +76,10 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
 
         with(lineChart) {
             description = null
-            setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
-                override fun onValueSelected(e: Entry?, h: Highlight?) {
-                    Debug.i(
-                        TAG, "onValueSelected : " +
-                                "x = ${DayValueFormatter().getFormattedValue(e!!.x)}, y = ${e.y}"
-                    )
-                }
-
-                override fun onNothingSelected() {
-
-                }
-            })
+            yValueFormatter()?.let {
+                axisLeft.valueFormatter = it
+                axisRight.valueFormatter = it
+            }
         }
     }
 
@@ -184,18 +175,17 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
      * @param intervals intervals that must be displayed (may contains keys that aren't in [map] and may not contains every keys of [map] neither
      *
      */
-    private fun showMap(map: TreeMap<Date, Int>, intervals: List<Date>) {
+    private fun showMap(map: TreeMap<Date, T>, intervals: List<Date>) {
         Debug.i(TAG, "showMap (${map.size} entries)")
         this.intervals = intervals
         val entries = ArrayList<Entry>()
 
         for ((index, interval) in intervals.withIndex()) {
             var value = map[interval]
-            if (value == null) value = 0
             entries.add(
                 Entry(
                     index.toFloat(),
-                    value.toFloat()
+                    value?.toFloat() ?: 0f
                 )
             )
         }
@@ -315,6 +305,12 @@ class PeriodLineChart(context: Context, attrs: AttributeSet) : LinearLayoutCompa
         return result
     }
 
+    /**
+     * Overridable function returning a [ValueFormatter] used to formatted Y axis (left and right)
+     */
+    open fun yValueFormatter(): ValueFormatter? {
+        return null
+    }
 
     /**
      * Formatter for X Axis : format a date into its year

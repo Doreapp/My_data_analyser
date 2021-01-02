@@ -10,6 +10,9 @@ import com.mandin.antoine.mydataanalyser.utils.Constants
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task for loading an image (as a [Bitmap])
+ */
 class ImageTaskLoader(
     private val context: Context,
     private val fileUri: Uri,

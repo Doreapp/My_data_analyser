@@ -1,5 +1,6 @@
 package com.mandin.antoine.mydataanalyser.facebook.model.data
 
+import com.mandin.antoine.mydataanalyser.tools.BaseStats
 import com.mandin.antoine.mydataanalyser.utils.Utils
 import java.util.*
 

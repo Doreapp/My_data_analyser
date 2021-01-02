@@ -8,6 +8,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * File parser for Spotify Stream
+ *
+ * @see StreamsData
+ */
 class StreamsParser : Parser<StreamsData>() {
     private val streams = ArrayList<Stream>()
     private val dateReader = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
@@ -21,6 +26,9 @@ class StreamsParser : Parser<StreamsData>() {
         return StreamsData(streams)
     }
 
+    /**
+     * Read a [Stream] information
+     */
     private fun readStream(reader: JsonReader): Stream {
         var endTime: Date? = null
         var artistName: String? = null

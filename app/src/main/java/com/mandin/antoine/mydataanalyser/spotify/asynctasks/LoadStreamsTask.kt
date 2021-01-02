@@ -4,11 +4,18 @@ import android.content.Context
 import androidx.documentfile.provider.DocumentFile
 import com.mandin.antoine.mydataanalyser.spotify.Paths
 import com.mandin.antoine.mydataanalyser.spotify.model.data.StreamsData
+import com.mandin.antoine.mydataanalyser.spotify.model.data.StreamsStats
 import com.mandin.antoine.mydataanalyser.spotify.parsers.StreamsParser
 import com.mandin.antoine.mydataanalyser.tools.TaskObserver
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import java.util.concurrent.Callable
 
+/**
+ * Async task used to load Spotify streams data
+ *
+ * @see StreamsData
+ * @see StreamsStats
+ */
 class LoadStreamsTask(
     private val docFile: DocumentFile,
     private val context: Context,
@@ -23,12 +30,16 @@ class LoadStreamsTask(
         docFile.listFiles().let {
             buildStreamsData(it)?.let { streamsData ->
                 result.streamsData = streamsData
-                //TODO stats about stream
+                observer?.notify("Building stats...")
+                result.streamsStats = StreamsStats(streamsData)
             }
         }
         return result
     }
 
+    /**
+     * Build [StreamsData] from an array of files
+     */
     private fun buildStreamsData(files: Array<DocumentFile>): StreamsData? {
         Debug.i(TAG, "buildStreamsData (${files.size} files)")
         observer?.setMaxProgress(files.size)
@@ -48,8 +59,12 @@ class LoadStreamsTask(
         return streamsData
     }
 
+    /**
+     * Result class containing [StreamsData] and [StreamsStats]
+     */
     inner class Result(
-        var streamsData: StreamsData? = null
+        var streamsData: StreamsData? = null,
+        var streamsStats: StreamsStats? = null
     )
 
 }

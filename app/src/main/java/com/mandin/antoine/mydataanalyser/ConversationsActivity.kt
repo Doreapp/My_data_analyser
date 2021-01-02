@@ -11,7 +11,7 @@ import com.mandin.antoine.mydataanalyser.tools.TaskRunner
 import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
-import com.mandin.antoine.mydataanalyser.views.facebook.ConversationsAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.facebook.ConversationsAdapter
 import kotlinx.android.synthetic.main.activity_conversations.*
 
 /**

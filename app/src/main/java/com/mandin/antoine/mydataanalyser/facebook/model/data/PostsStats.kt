@@ -1,9 +1,13 @@
 package com.mandin.antoine.mydataanalyser.facebook.model.data
 
+import com.mandin.antoine.mydataanalyser.tools.BaseStats
 import com.mandin.antoine.mydataanalyser.utils.Utils
 import java.util.*
 import kotlin.collections.HashMap
 
+/**
+ * Statistics about facebook posts
+ */
 class PostsStats(postsData: PostsData) : BaseStats() {
     val postCountByYear = TreeMap<Date, Int>(Utils.ClassicDateComparator)
     val postCountByMonth = TreeMap<Date, Int>(Utils.ClassicDateComparator)

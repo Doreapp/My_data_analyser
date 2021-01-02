@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SpotifyDataActivity">
+
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:gravity="center_horizontal">
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_margin="@dimen/spaceSmall"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/tvStreamCounts"/>
+        <TextView android:layout_width="wrap_content"
+                  android:layout_margin="@dimen/spaceSmall"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/tvStreamTime"/>
+
+        <com.mandin.antoine.mydataanalyser.views.PeriodCountsLineChart
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/chartStreamCount"/>
+
+        <com.mandin.antoine.mydataanalyser.views.StaticListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listArtistCounts"/>
+
+        <com.mandin.antoine.mydataanalyser.views.StaticListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listTrackCounts"/>
+
+        <com.mandin.antoine.mydataanalyser.views.PeriodDurationsLineChart
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/chartStreamTime"/>
+
+        <com.mandin.antoine.mydataanalyser.views.StaticListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listArtistTimes"/>
+
+        <com.mandin.antoine.mydataanalyser.views.StaticListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listTrackTimes"/>
+
+    </LinearLayout>
+
+</ScrollView>

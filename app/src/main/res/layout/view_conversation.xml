@@ -58,7 +58,7 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:id="@+id/btnShowPhotos"/>
 
-        <com.mandin.antoine.mydataanalyser.views.PeriodLineChart
+        <com.mandin.antoine.mydataanalyser.views.PeriodCountsLineChart
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:id="@+id/periodLineChart"/>

@@ -12,7 +12,12 @@
             android:text="Choose Facebook folder"
             style="@style/Widget.AppCompat.Button.Colored"
             android:enabled="false"
-            android:id="@+id/btnChooseFacebookFolder"
+            android:id="@+id/btnChooseFacebookFolder"/>
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Choose Spotify folder"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:enabled="false"
+            android:id="@+id/btnChooseSpotifyFolder"
             android:layout_marginBottom="@dimen/spaceLarge"/>
 
     <Button android:layout_width="wrap_content"
@@ -34,5 +39,12 @@
             android:enabled="false"
             android:id="@+id/btnShowComments"
             android:text="Facebook Comments"/>
+
+
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:id="@+id/btnShowSpotify"
+            android:text="Spotify analysis"/>
 
 </LinearLayout>

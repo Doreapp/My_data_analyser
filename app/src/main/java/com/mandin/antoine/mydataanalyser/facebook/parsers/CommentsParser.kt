@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class CommentsParser : Parser<CommentsData>() {
+class CommentsParser : FacebookParser<CommentsData>() {
     private val TAG = "CommentsParser"
     private val comments = ArrayList<Comment>()
 

@@ -12,7 +12,7 @@ import com.mandin.antoine.mydataanalyser.utils.Debug
 import com.mandin.antoine.mydataanalyser.utils.Preferences
 import com.mandin.antoine.mydataanalyser.views.LoadingDialog
 import com.mandin.antoine.mydataanalyser.views.adapters.NumberedItemAdapter
-import com.mandin.antoine.mydataanalyser.views.adapters.PostsAdapter
+import com.mandin.antoine.mydataanalyser.views.adapters.facebook.PostsAdapter
 import kotlinx.android.synthetic.main.activity_posts.*
 
 /**

@@ -12,6 +12,11 @@ object Constants {
     const val REQUEST_CODE_PICK_FACEBOOK_FOLDER: Int = 2001
 
     /**
+     * Request code for picking the spotify data folder
+     */
+    const val REQUEST_CODE_PICK_SPOTIFY_FOLDER: Int = 2002
+
+    /**
      * Extra name of the conversation id
      */
     const val EXTRA_CONVERSATION_ID = "conversationId"

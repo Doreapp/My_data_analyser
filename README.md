@@ -51,6 +51,15 @@ Folders/files that I want to analyse:
    * Evolution
    * History 
    * Bests ?
+* Thoses statistics but only about the last Year / the last month ...
+   
+ ### Google
+ 
+ #### YouTube
+* Evolution of watch time / counts 
+* Best Youtubers (in time and counts) 
+* Search history
+* Thoses statistics but only about the last Year / the last month ...
 
 ## Libraries 
 I use [MPAndroidChart](https://weeklycoding.com/mpandroidchart/) for displaying graphs ([Javadoc](https://javadoc.jitpack.io/com/github/PhilJay/MPAndroidChart/v3.1.0/javadoc/)).
